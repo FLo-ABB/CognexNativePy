@@ -10,4 +10,5 @@ def main():
     if get_online() == 1:
         set_online(0)
     load_file('item1.job')
+    set_online(1)
     close_socket(s)
