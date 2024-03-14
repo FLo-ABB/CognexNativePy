@@ -1,5 +1,6 @@
 import socket
 from CognexCommandError import CognexCommandError
+import textwrap
 
 PORT = 23
 
@@ -110,3 +111,18 @@ def hex_to_bytes(hex_string: str) -> bytes:
         b'Hello World'
     """
     return bytes.fromhex(hex_string)
+
+
+def format_job_data(data: bytes):
+    """
+    Formats the given data as a hexadecimal string with a maximum of 80 characters per line.
+
+    Args:
+        data (bytes): The data to be formatted.
+
+    Returns:
+        str: The formatted hexadecimal string.
+    """
+    hex_data = data.hex()
+    formatted_hex_data = textwrap.wrap(hex_data, 80)
+    return "\n".join(formatted_hex_data)
