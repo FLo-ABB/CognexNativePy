@@ -1,7 +1,7 @@
 import os
 
-from CognexCommandError import CognexCommandError
-from utils import format_job_data, hex_to_bytes, send_command
+from pycognex.CognexCommandError import CognexCommandError
+from pycognex.utils import format_job_data, hex_to_bytes, send_command
 
 
 def load_file(filename: str) -> None:

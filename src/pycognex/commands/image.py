@@ -1,5 +1,5 @@
-from CognexCommandError import CognexCommandError
-from utils import send_command, hex_to_bytes
+from pycognex.CognexCommandError import CognexCommandError
+from pycognex.utils import send_command, hex_to_bytes
 import textwrap
 
 

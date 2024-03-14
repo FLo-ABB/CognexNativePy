@@ -1,5 +1,5 @@
-from CognexCommandError import CognexCommandError
-from utils import send_command
+from pycognex.CognexCommandError import CognexCommandError
+from pycognex.utils import send_command
 
 
 def set_online(mode: int) -> None:

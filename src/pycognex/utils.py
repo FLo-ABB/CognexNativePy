@@ -1,5 +1,5 @@
 import socket
-from CognexCommandError import CognexCommandError
+from pycognex.CognexCommandError import CognexCommandError
 import textwrap
 
 PORT = 23

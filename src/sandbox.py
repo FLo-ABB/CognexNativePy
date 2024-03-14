@@ -1,7 +1,7 @@
 # This file is used to test the Cognex communication
-from utils import open_socket, close_socket, login_to_cognex_system
-from commands.file_and_job import load_file, get_file
-from commands.execution_and_online import set_online, get_online
+from pycognex.utils import open_socket, close_socket, login_to_cognex_system
+from pycognex.commands.file_and_job import load_file, get_file
+from pycognex.commands.execution_and_online import set_online, get_online
 
 
 def load_job_if_not_current(job_name: str) -> None:
