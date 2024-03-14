@@ -71,7 +71,7 @@ def close_socket(socket: socket.socket) -> None:
     socket.close()
 
 
-def log_cognex(socket: socket.socket, user: str, password: str):
+def login_to_cognex_system(socket: socket.socket, user: str, password: str):
     """
     Logs into the Cognex system using the provided socket, user, and password.
 

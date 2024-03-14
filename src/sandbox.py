@@ -1,5 +1,5 @@
 # This file is used to test the Cognex communication
-from utils import open_socket, close_socket, log_cognex
+from utils import open_socket, close_socket, login_to_cognex_system
 from commands.file_and_job import load_file, get_file
 from commands.execution_and_online import set_online, get_online
 
@@ -12,12 +12,16 @@ def load_job_if_not_current(job_name: str) -> None:
         set_online(1)
 
 
-def main():
-    s = open_socket('192.168.103.2')
-    log_cognex(s, 'admin', '')
-    load_job_if_not_current('job1.job')
+def set_system_online() -> None:
     if get_online() == 0:
         set_online(1)
+
+
+def main():
+    s = open_socket('192.168.103.2')
+    login_to_cognex_system(s, 'admin', '')
+    load_job_if_not_current('job1.job')
+    set_system_online()
     close_socket(s)
 
 
