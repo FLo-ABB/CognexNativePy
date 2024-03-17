@@ -114,17 +114,17 @@ branch. Pull requests are warmly welcome.
 | ------------------ | ----------- | ------ |
 | Set Online         | Yes         | No     |
 | Get Online         | Yes         | No     |
-| Set Event          | No          | No     |
-| Set Event and Wait | No          | No     |
-| Reset System       | No          | No     |
-| Send Message       | No          | No     |
+| Set Event          | Yes         | No     |
+| Set Event and Wait | Yes         | No     |
+| Reset System       | Yes         | No     |
+| Send Message       | Yes         | No     |
 
 ## Key Performance Indicators 🎯
 
 | Indicator                     | Count |
 | ----------------------------- | ----- |
 | Total of commands             | 34    |
-| Total of implemented commands | 24    |
+| Total of implemented commands | 23    |
 | Total of tested commands      | 0     |
 
 ### Progress 
