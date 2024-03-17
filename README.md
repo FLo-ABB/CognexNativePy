@@ -28,30 +28,31 @@ Download the repository and import the src folder into your project. The wrapper
 
 Example of how to use the wrapper:
 ```python
-from utils import open_socket, close_socket, login_to_cognex_system
-from commands.file_and_job import load_file, get_file
-from commands.execution_and_online import set_online, get_online
-
-
-def load_job_if_not_current(job_name: str) -> None:
-    if get_file() != job_name:
-        if get_online() == 1:
-            set_online(0)
-        load_file(job_name)
-        set_online(1)
-
-
-def set_system_online() -> None:
-    if get_online() == 0:
-        set_online(1)
+from pycognex import NativeInterface
 
 
 def main():
-    s = open_socket('192.168.103.2')
-    login_to_cognex_system(s, 'admin', '')
-    load_job_if_not_current('job1.job')
-    set_system_online()
-    close_socket(s)
+    try:
+        # Create a socket connection to the Cognex In-Sight vision system and log in
+        native_interface = NativeInterface('192.168.103.2', 'admin', '')
+        exectution_and_online = native_interface.exectution_and_online
+        file_and_job = native_interface.file_and_job
+
+        # Load the job if it is not already loaded
+        if exectution_and_online.get_online() == 1:
+            exectution_and_online.set_online(0)
+        file_and_job.load_file("item1.job")
+        exectution_and_online.set_online(1)
+
+        # Set the system online to be able to trigg the camera and get results
+        if exectution_and_online.get_online() == 0:
+            exectution_and_online.set_online(1)
+
+        # Close the socket connection
+        native_interface.close()
+
+    except Exception as e:
+        print(f"Error: {e}")
 ```
 
 ## Contributing 🤝

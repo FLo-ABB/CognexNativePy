@@ -50,12 +50,16 @@ def open_socket(host_adress: str) -> socket.socket:
 
     """
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((host_adress, PORT))
-    data_received = receive_data(s)
-    if not (data_received.startswith('Welcome')):
-        raise CognexCommandError(f'Error logging in, expected "Welcome [...]", received "{data_received}"')
-    else:
-        return s
+    s.settimeout(3)
+    try:
+        s.connect((host_adress, PORT))
+        data_received = receive_data(s)
+        if not (data_received.startswith('Welcome')):
+            raise CognexCommandError(f'Error logging in, expected "Welcome [...]", received "{data_received}"')
+        else:
+            return s
+    except socket.timeout:
+        raise CognexCommandError(f'Connection attempt to {host_adress} timed out')
 
 
 def close_socket(socket: socket.socket) -> None:
