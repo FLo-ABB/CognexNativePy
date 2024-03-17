@@ -1,12 +1,10 @@
-# 📷 🐍 NativeCognexPythonWrapper 🐍 📷
+# 📷 🐍 pycognex 🐍 📷
 
-WORK IN PROGRESS, see the [Status](#status-) section for more information.
-
-NativeCognexPythonWrapper is a Python wrapper for the Cognex native mode commands. It provides a simple and intuitive wrapper to interact with Cognex cameras. It's based on the Cognex native mode commands, which can be found in [Cognex Documentation Website](https://support.cognex.com/docs/is_590/web/EN/ise/Content/Communications_Reference/LoadFile.htm?tocpath=Communications%20Reference%7CNative%20Mode%20Communications%7CBasic%20Native%20Mode%20Commands%7CFile%20%26%20Job%20Commands%7C_____1).
+`pycognex` is a Python wrapper for the Cognex native mode commands. It provides a simple and intuitive wrapper to interact with Cognex cameras. It's based on the Cognex native mode commands, which can be found in [Cognex Documentation Website](https://support.cognex.com/docs/is_590/web/EN/ise/Content/Communications_Reference/LoadFile.htm?tocpath=Communications%20Reference%7CNative%20Mode%20Communications%7CBasic%20Native%20Mode%20Commands%7CFile%20%26%20Job%20Commands%7C_____1).
 
 ## Table of Contents 📜
 
-- [📷 🐍 NativeCognexPythonWrapper 🐍 📷](#--nativecognexpythonwrapper--)
+- [📷 🐍 pycognex 🐍 📷](#--pycognex--)
   - [Table of Contents 📜](#table-of-contents-)
   - [Installation 🚀](#installation-)
   - [Usage 📚](#usage-)
@@ -22,7 +20,12 @@ NativeCognexPythonWrapper is a Python wrapper for the Cognex native mode command
 
 ## Installation 🚀
 
-Download the repository and import the src folder into your project. The wrapper is divided into two main modules: `utils` and `commands`. The `utils` module contains the low-level functions to open and close a socket, and to log into the Cognex camera. The `commands` module contains the high-level functions to interact with the camera, such as loading a file, setting the camera online, and getting the current online status. Look over the `sandbox.py` file to see how to use the wrapper.
+To use this library in your project, first download the repository and place the `pycognex` folder in your project's directory. You can then import the `NativeInterface` class from this library to interact with the Cognex camera. 
+
+The `NativeInterface` class provides four categories of commands: `exectution_and_online`, `file_and_job`, `image`, and `settings_and_cell_value`. Each category corresponds to a set of related commands as documented in the [Cognex Documentation Website](https://support.cognex.com/docs/is_590/web/EN/ise/Content/Communications_Reference/LoadFile.htm?tocpath=Communications%20Reference%7CNative%20Mode%20Communications%7CBasic%20Native%20Mode%20Commands%7CFile%20%26%20Job%20Commands%7C_____1).
+
+Each command category is an attribute of the `NativeInterface` class, allowing you to easily access and execute the commands you need for your specific use case.
+
 
 ## Usage 📚
 
@@ -62,7 +65,7 @@ branch. Pull requests are warmly welcome.
 
 ## License 📝
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-black.svg)](https://opensource.org/licenses/MIT)
 
 ## Status 🚧
 
