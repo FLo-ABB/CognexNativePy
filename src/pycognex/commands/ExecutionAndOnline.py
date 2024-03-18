@@ -26,7 +26,6 @@ class ExecutionAndOnline:
         Raises:
             ValueError: If the mode is not "0" or "1".
             CognexCommandError: If the command to set the Online mode fails.
-
         """
         if mode not in ["0", "1"]:
             raise ValueError("The mode must be 0 for Offline or 1 for Online.")
@@ -44,16 +43,12 @@ class ExecutionAndOnline:
                 "-6": "User does not have Full Access to execute the command. For more information, see Cognex Documentation."
             }
 
-            try:
-                if status_code == "1":
-                    return None
-                elif status_code in status_messages:
-                    raise CognexCommandError(status_messages[status_code])
-                else:
-                    raise CognexCommandError(f"Unknown status code: {status_code}")
-            except CognexCommandError as e:
-                print(f"Error setting Online mode: {e}")
+            if status_code == "1":
                 return None
+            elif status_code in status_messages:
+                raise CognexCommandError(status_messages[status_code])
+            else:
+                raise CognexCommandError(f"Unknown status code: {status_code}")
 
     def get_online(self) -> str:
         """
@@ -64,20 +59,15 @@ class ExecutionAndOnline:
 
         Raises:
             CognexCommandError: If the command to retrieve the Online state fails.
-
         """
         command = "GO"
         send_command(self.socket, command)
         online_state = receive_data(self.socket)[0]
 
-        try:
-            if online_state in ["0", "1"]:
-                return online_state
-            else:
-                raise CognexCommandError(f"Unknown Online state: {online_state}")
-        except CognexCommandError as e:
-            print(f"Error getting Online state: {e}")
-            return None
+        if online_state in ["0", "1"]:
+            return online_state
+        else:
+            raise CognexCommandError(f"Unknown Online state: {online_state}")
 
     def set_event(self, event_code: str) -> tuple:
         """
@@ -102,7 +92,6 @@ class ExecutionAndOnline:
               transmission of results to the next station (e.g., a PLC or motion controller) in the inspection process. To avoid delayed inspections
               in these application environments, Cognex recommends Soft Events not be used.
 
-
         Args:
             event_code (int): The Event code to set.
                             0 to 7 = Specifies a soft trigger (Soft 0, Soft 1, ... Soft 7).
@@ -115,7 +104,6 @@ class ExecutionAndOnline:
         Raises:
             ValueError: If the event code is not between 0 and 8 (inclusive).
             CognexCommandError: If the command to trigger the event fails.
-
         """
         event_code_number = int(event_code)
         if not 0 <= event_code_number <= 8:
@@ -133,16 +121,12 @@ class ExecutionAndOnline:
             "-6": "User does not have Full Access to execute the command. For more information, see Cognex Documentation.",
         }
 
-        try:
-            if status_code == "1":
-                return status_code, result
-            elif status_code in status_messages:
-                raise CognexCommandError(status_messages[status_code])
-            else:
-                raise CognexCommandError(f"Unknown status code: {status_code}")
-        except CognexCommandError as e:
-            print(f"Error setting event: {e}")
-            return None
+        if status_code == "1":
+            return status_code, result
+        elif status_code in status_messages:
+            raise CognexCommandError(status_messages[status_code])
+        else:
+            raise CognexCommandError(f"Unknown status code: {status_code}")
 
     def set_event_and_wait(self, event_code: str) -> int:
         """
@@ -169,7 +153,6 @@ class ExecutionAndOnline:
         Raises:
             ValueError: If the event code is not between 0 and 8 (inclusive).
             CognexCommandError: If the command to trigger the event fails.
-
         """
         event_code_number = int(event_code)
         if not 0 <= event_code_number <= 8:
@@ -187,16 +170,12 @@ class ExecutionAndOnline:
             "-6": "User does not have Full Access to execute the command. For more information, see Cognex Documentation.",
         }
 
-        try:
-            if status_code == "1":
-                return status_code
-            elif status_code in status_messages:
-                raise CognexCommandError(status_messages[status_code])
-            else:
-                raise CognexCommandError(f"Unknown status code: {status_code}")
-        except CognexCommandError as e:
-            print(f"Error setting event and waiting: {e}")
-            return None
+        if status_code == "1":
+            return status_code
+        elif status_code in status_messages:
+            raise CognexCommandError(status_messages[status_code])
+        else:
+            raise CognexCommandError(f"Unknown status code: {status_code}")
 
     def reset_system(self) -> None:
         """
@@ -207,7 +186,6 @@ class ExecutionAndOnline:
 
         Raises:
             CognexCommandError: If the command to reset the system fails.
-
         """
         command = "RT"
         send_command(self.socket, command)
@@ -217,16 +195,12 @@ class ExecutionAndOnline:
             "-6": "User does not have Full Access to execute the command. For more information, see Cognex Documentation.",
         }
 
-        try:
-            if status_code is None:
-                return None
-            elif status_code in status_messages:
-                raise CognexCommandError(status_messages[status_code])
-            else:
-                raise CognexCommandError(f"Unknown status code: {status_code}")
-        except CognexCommandError as e:
-            print(f"Error resetting system: {e}")
+        if status_code is None:
             return None
+        elif status_code in status_messages:
+            raise CognexCommandError(status_messages[status_code])
+        else:
+            raise CognexCommandError(f"Unknown status code: {status_code}")
 
     def send_message(self, message: str, event_code: str = None) -> int:
         """
@@ -244,7 +218,6 @@ class ExecutionAndOnline:
 
         Raises:
             CognexCommandError: If the command to send the message fails.
-
         """
         event_code_number = int(event_code)
         if event_code_number is not None and (not 0 <= event_code_number <= 8):
@@ -264,13 +237,9 @@ class ExecutionAndOnline:
             "-6": "User does not have Full Access to execute the command. For more information, see Cognex Documentation.",
         }
 
-        try:
-            if status_code == "1":
-                return status_code
-            elif status_code in status_messages:
-                raise CognexCommandError(status_messages[status_code])
-            else:
-                raise CognexCommandError(f"Unknown status code: {status_code}")
-        except CognexCommandError as e:
-            print(f"Error sending message: {e}")
-            return None
+        if status_code == "1":
+            return status_code
+        elif status_code in status_messages:
+            raise CognexCommandError(status_messages[status_code])
+        else:
+            raise CognexCommandError(f"Unknown status code: {status_code}")

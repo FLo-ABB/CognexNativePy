@@ -9,7 +9,7 @@ def main():
         file_and_job = native_interface.file_and_job
 
         # Load the job if it is not already loaded
-        job_name = "tata.job"
+        job_name = "myJob.job"
         if file_and_job.get_file() != job_name:
             if execution_and_online.get_online() == "1":
                 execution_and_online.set_online("0")

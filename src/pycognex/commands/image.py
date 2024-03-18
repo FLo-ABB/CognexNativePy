@@ -1,5 +1,5 @@
 from pycognex.CognexCommandError import CognexCommandError
-from pycognex.utils import send_command, hex_to_bytes
+from pycognex.utils import send_command, hex_to_bytes, receive_data
 import textwrap
 import socket
 
@@ -20,37 +20,32 @@ class Image:
 
         """
         command = "RB"
-        status_code, image_data = send_command(self.socket, command)
+        send_command(self.socket, command)
+        data_received = receive_data(self.socket)
+        print(f"data_received: {data_received}")
+        status_code = data_received[0]
+        size = data_received[1]
+        print(f"size: {size}")
+        print(f"status_code: {status_code}")
 
         status_messages = {
-            0: "Unrecognized command.",
-            -4: "The In-Sight sensor is out of memory.",
-            -6: "User does not have Full Access to execute the command. For more information, see Cognex Documentation.",
+            "0": "Unrecognized command.",
+            "-4": "The In-Sight sensor is out of memory.",
+            "-6": "User does not have Full Access to execute the command. For more information, see Cognex Documentation.",
         }
 
-        try:
-            if status_code == 1:
-                image_data_lines = image_data.strip().split("\n")
-                if len(image_data_lines) < 3:
-                    raise CognexCommandError("Invalid image data format.")
+        if status_code == "1":
+            image_size = size  # in bytes
 
-                image_size = int(image_data_lines[0])
-                image_data_hex = "".join(image_data_lines[1:-1]).replace(" ", "")
-                image_data_bytes = hex_to_bytes(image_data_hex)
-                image_checksum = image_data_lines[-1]
-
-                return {
-                    "size": image_size,
-                    "data": image_data_bytes,
-                    "checksum": image_checksum,
-                }
-            elif status_code in status_messages:
-                raise CognexCommandError(status_messages[status_code])
-            else:
-                raise CognexCommandError(f"Unknown status code: {status_code}")
-        except CognexCommandError as e:
-            print(f"Error reading image: {e}")
-            return None
+            return {
+                "size": image_size,
+                "data": "image_data_bytes",
+                "checksum": "image_checksum",
+            }
+        elif status_code in status_messages:
+            raise CognexCommandError(status_messages[status_code])
+        else:
+            raise CognexCommandError(f"Unknown status code: {status_code}")
 
     def read_image(self) -> dict:
         """
