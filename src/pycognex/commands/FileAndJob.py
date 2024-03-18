@@ -1,7 +1,7 @@
 import os
 
 from pycognex.CognexCommandError import CognexCommandError
-from pycognex.utils import format_job_data, hex_to_bytes, send_command
+from pycognex.utils import format_job_data, hex_to_bytes, send_command, receive_data
 
 
 class FileAndJob:
@@ -33,19 +33,21 @@ class FileAndJob:
             CognexCommandError: If the command to load the file fails.
 
         """
-        command = f"LF[{filename}]"
-        status_code = send_command(self.socket, command)
-
+        command = f"LF{filename}"
+        send_command(self.socket, command)
+        status_code = receive_data(self.socket)
+        print("aaaa")
+        print(status_code)
         status_messages = {
-            0: "Unrecognized command.",
-            -1: "The filename is missing.",
-            -2: "The job failed to load, the vision system is Online, or the file was not found.",
-            -4: "The vision system is out of memory.",
-            -6: "User does not have Full Access to execute the command. For more information, see Cognex Documentation."
+            "0": "Unrecognized command.",
+            "-1": "The filename is missing.",
+            "-2": "The job failed to load, the vision system is Online, or the file was not found.",
+            "-4": "The vision system is out of memory.",
+            "-6": "User does not have Full Access to execute the command. For more information, see Cognex Documentation."
         }
 
         try:
-            if status_code == 1:
+            if status_code == "1":
                 return None
             elif status_code in status_messages:
                 raise CognexCommandError(status_messages[status_code])

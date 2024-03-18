@@ -50,7 +50,6 @@ def open_socket(host_adress: str) -> socket.socket:
 
     """
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.settimeout(3)
     try:
         s.connect((host_adress, PORT))
         data_received = receive_data(s)
@@ -88,7 +87,7 @@ def login_to_cognex_system(socket: socket.socket, user: str, password: str):
         None
     """
     expected_responses = ['User: ', 'Password: ', 'User Logged In']
-    commands = [user, password, None]
+    commands = [user, password, ""]
     for expected_response, command in zip(expected_responses, commands):
         if receive_data(socket) == expected_response:
             if command is not None:

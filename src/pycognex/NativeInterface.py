@@ -14,13 +14,13 @@ class NativeInterface():
         try:
             self.socket = open_socket(ip_address)
             login_to_cognex_system(self.socket, user, password)
-            self.exectution_and_online = ExecutionAndOnline(self.socket)
-            self.file_and_job = FileAndJob(self.socket)
-            self.image = Image(self.socket)
-            self.settings_and_cells_values = SettingsAndCellsValues(self.socket)
         except CognexCommandError as e:
             self.socket = None
             raise e
+        self.execution_and_online = ExecutionAndOnline(self.socket)
+        self.file_and_job = FileAndJob(self.socket)
+        self.image = Image(self.socket)
+        self.settings_and_cells_values = SettingsAndCellsValues(self.socket)
 
     def __del__(self):
         if self.socket is not None:
