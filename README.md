@@ -73,12 +73,12 @@ branch. Pull requests are warmly welcome.
 
 | Command     | Implemented | Tested |
 | ----------- | ----------- | ------ |
-| Load File   | Yes         | No     |
+| Load File   | Yes         | Yes    |
 | Store File  | Yes         | No     |
 | Read File   | Yes         | No     |
 | Write File  | Yes         | No     |
 | Delete File | Yes         | No     |
-| Get File    | Yes         | No     |
+| Get File    | Yes         | Yes    |
 | Set Job     | Yes         | No     |
 | Store Job   | Yes         | No     |
 | Read Job    | Yes         | No     |
@@ -115,12 +115,12 @@ branch. Pull requests are warmly welcome.
 
 | Command            | Implemented | Tested |
 | ------------------ | ----------- | ------ |
-| Set Online         | Yes         | No     |
-| Get Online         | Yes         | No     |
-| Set Event          | Yes         | No     |
-| Set Event and Wait | Yes         | No     |
+| Set Online         | Yes         | Yes    |
+| Get Online         | Yes         | Yes    |
+| Set Event          | Yes         | Yes    |
+| Set Event and Wait | Yes         | Yes    |
 | Reset System       | Yes         | No     |
-| Send Message       | Yes         | No     |
+| Send Message       | Yes         | Yes    |
 
 ## Key Performance Indicators 🎯
 
@@ -128,10 +128,10 @@ branch. Pull requests are warmly welcome.
 | ----------------------------- | ----- |
 | Total of commands             | 34    |
 | Total of implemented commands | 23    |
-| Total of tested commands      | 0     |
+| Total of tested commands      | 7     |
 
 ### Progress 
 
 🟦🟦🟦🟦🟦🟦🟦⬛⬛⬛ : Implementation
 
-⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛  : Testing
+🟩🟩⬛⬛⬛⬛⬛⬛⬛⬛  : Testing

@@ -31,7 +31,7 @@ def receive_data(socket: socket.socket) -> str:
         str: The received data as a string.
     """
     data = socket.recv(1024)
-    string_data = data.decode('ascii').replace('\r\n', '')
+    string_data = data.decode('ascii').split('\r\n')
     return string_data
 
 
@@ -52,7 +52,7 @@ def open_socket(host_adress: str) -> socket.socket:
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         s.connect((host_adress, PORT))
-        data_received = receive_data(s)
+        data_received = receive_data(s)[0]
         if not (data_received.startswith('Welcome')):
             raise CognexCommandError(f'Error logging in, expected "Welcome [...]", received "{data_received}"')
         else:
@@ -87,9 +87,9 @@ def login_to_cognex_system(socket: socket.socket, user: str, password: str):
         None
     """
     expected_responses = ['User: ', 'Password: ', 'User Logged In']
-    commands = [user, password, ""]
+    commands = [user, password, None]
     for expected_response, command in zip(expected_responses, commands):
-        if receive_data(socket) == expected_response:
+        if receive_data(socket)[0] == expected_response:
             if command is not None:
                 send_command(socket, command)
         else:

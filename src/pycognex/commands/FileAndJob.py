@@ -35,9 +35,7 @@ class FileAndJob:
         """
         command = f"LF{filename}"
         send_command(self.socket, command)
-        status_code = receive_data(self.socket)
-        print("aaaa")
-        print(status_code)
+        status_code = receive_data(self.socket)[0]
         status_messages = {
             "0": "Unrecognized command.",
             "-1": "The filename is missing.",
@@ -83,27 +81,28 @@ class FileAndJob:
         """
         if not filename.endswith(".JOB"):
             raise ValueError("The filename must have a .JOB extension.")
+        else:
+            command = f"TF{filename}"
+            send_command(self.socket, command)
+            status_code = receive_data(self.socket)
 
-        command = f"TF[{filename}]"
-        status_code = send_command(self.socket, command)
+            status_messages = {
+                "0": "Unrecognized command.",
+                "-1": "The filename is missing.",
+                "-2": "The job failed to save, the vision system is Online or the file was not found, therefore the command could not be executed.",
+                "-6": "User does not have Full Access to execute the command. For more information, see Cognex Documentation."
+            }
 
-        status_messages = {
-            0: "Unrecognized command.",
-            -1: "The filename is missing.",
-            -2: "The job failed to save, the vision system is Online or the file was not found, therefore the command could not be executed.",
-            -6: "User does not have Full Access to execute the command. For more information, see Cognex Documentation."
-        }
-
-        try:
-            if status_code == 1:
+            try:
+                if status_code == "1":
+                    return None
+                elif status_code in status_messages:
+                    raise CognexCommandError(status_messages[status_code])
+                else:
+                    raise CognexCommandError(f"Unknown status code: {status_code}")
+            except CognexCommandError as e:
+                print(f"Error storing file: {e}")
                 return None
-            elif status_code in status_messages:
-                raise CognexCommandError(status_messages[status_code])
-            else:
-                raise CognexCommandError(f"Unknown status code: {status_code}")
-        except CognexCommandError as e:
-            print(f"Error storing file: {e}")
-            return None
 
     def read_file(self, filename: str) -> dict:
         """
@@ -126,18 +125,19 @@ class FileAndJob:
             CognexCommandError: If the command to read the file fails.
 
         """
-        command = f"RF[{filename}]"
-        status_code, job_data = send_command(self.socket, command)
+        command = f"RF{filename}"
+        send_command(self.socket, command)
+        status_code, job_data = receive_data(self.socket)
 
         status_messages = {
-            0: "Unrecognized command.",
-            -1: "The job filename is missing.",
-            -2: "There is no job saved with the given name or the job data is invalid, therefore the command could not be executed.",
-            -6: "User does not have Full Access to execute the command. For more information, see Cognex Documentation."
+            "0": "Unrecognized command.",
+            "-1": "The job filename is missing.",
+            "-2": "There is no job saved with the given name or the job data is invalid, therefore the command could not be executed.",
+            "-6": "User does not have Full Access to execute the command. For more information, see Cognex Documentation."
         }
 
         try:
-            if status_code == 1:
+            if status_code == "1":
                 lines = job_data.strip().split("\n")
                 if len(lines) < 4:
                     raise CognexCommandError("Invalid job data format.")
@@ -280,15 +280,16 @@ class FileAndJob:
 
         """
         command = "GF"
-        status_code, filename = send_command(self.socket, command)
-
+        send_command(self.socket, command)
+        data_received = receive_data(self.socket)
+        status_code, filename = data_received[0], data_received[1]
         status_messages = {
-            0: "Unrecognized command.",
-            -2: "The active job has not been saved, therefore the command could not be executed.",
+            "0": "Unrecognized command.",
+            "-2": "The active job has not been saved, therefore the command could not be executed.",
         }
 
         try:
-            if status_code == 1:
+            if status_code == "1":
                 return filename
             elif status_code in status_messages:
                 raise CognexCommandError(status_messages[status_code])
