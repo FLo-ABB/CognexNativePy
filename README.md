@@ -75,16 +75,16 @@ branch. Pull requests are warmly welcome.
 | ----------- | ----------- | ------ |
 | Load File   | Yes         | Yes    |
 | Store File  | Yes         | No     |
-| Read File   | Yes         | No     |
+| Read File   | Yes         | Yes    |
 | Write File  | Yes         | No     |
-| Delete File | Yes         | No     |
+| Delete File | Yes         | Yes    |
 | Get File    | Yes         | Yes    |
-| Set Job     | Yes         | No     |
+| Set Job     | Yes         | Yes    |
 | Store Job   | Yes         | No     |
-| Read Job    | Yes         | No     |
+| Read Job    | Yes         | Yes    |
 | Write Job   | Yes         | No     |
-| Delete Job  | Yes         | No     |
-| Get Job     | Yes         | No     |
+| Delete Job  | Yes         | Yes    |
+| Get Job     | Yes         | Yes    |
 
 ### Image Commands (4 commands)
 
@@ -128,10 +128,10 @@ branch. Pull requests are warmly welcome.
 | ----------------------------- | ----- |
 | Total of commands             | 34    |
 | Total of implemented commands | 21    |
-| Total of tested commands      | 9     |
+| Total of tested commands      | 15    |
 
 ### Progress 
 
 🟦🟦🟦🟦🟦🟦⬛⬛⬛⬛ : Implementation
 
-🟩🟩🟩⬛⬛⬛⬛⬛⬛⬛  : Testing
+🟩🟩🟩🟩⬛⬛⬛⬛⬛⬛  : Testing

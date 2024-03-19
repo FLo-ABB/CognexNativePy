@@ -160,3 +160,34 @@ def receive_image_data(socket: socket.socket) -> dict:
         "data": image_data,
         "checksum": check_sum
     }
+
+
+def receive_file_data(socket: socket.socket) -> dict:
+    """
+    Receives file data from the given socket.
+
+    Args:
+        socket (socket.socket): The socket to receive data from.
+
+    Returns:
+        dict: A dictionary containing the received file data.
+    """
+    data_received = receive_data(socket)
+    status_code = data_received[0]
+    file_name = data_received[1]
+    size = int(data_received[2])
+    file_data = b''
+    # size is divided by 2 because the file data is in hexadecimal format
+    while len(file_data) < size/2:
+        data_received = receive_data(socket)
+        for data in data_received:
+            file_data += hex_to_bytes(data)
+    check_sum = receive_data(socket)[0]
+
+    return {
+        "status_code": status_code,
+        "file_name": file_name,
+        "size": size,
+        "data": file_data,
+        "checksum": check_sum
+    }
