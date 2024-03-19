@@ -90,10 +90,10 @@ branch. Pull requests are warmly welcome.
 
 | Command     | Implemented | Tested |
 | ----------- | ----------- | ------ |
-| Read BMP    | Yes         | No     |
-| Read Image  | Yes         | No     |
-| Write BMP   | Yes         | No     |
-| Write Image | Yes         | No     |
+| Read BMP    | Yes         | Yes    |
+| Read Image  | Yes         | Yes    |
+| Write BMP   | No          | No     |
+| Write Image | No          | No     |
 
 ### Settings & Cell Value Commands (11 commands)
 
@@ -127,11 +127,11 @@ branch. Pull requests are warmly welcome.
 | Indicator                     | Count |
 | ----------------------------- | ----- |
 | Total of commands             | 34    |
-| Total of implemented commands | 23    |
-| Total of tested commands      | 7     |
+| Total of implemented commands | 21    |
+| Total of tested commands      | 9     |
 
 ### Progress 
 
-🟦🟦🟦🟦🟦🟦🟦⬛⬛⬛ : Implementation
+🟦🟦🟦🟦🟦🟦⬛⬛⬛⬛ : Implementation
 
-🟩🟩⬛⬛⬛⬛⬛⬛⬛⬛  : Testing
+🟩🟩🟩⬛⬛⬛⬛⬛⬛⬛  : Testing

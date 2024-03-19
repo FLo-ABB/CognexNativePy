@@ -7,6 +7,7 @@ def main():
         native_interface = NativeInterface('192.168.56.1', 'admin', '')
         execution_and_online = native_interface.execution_and_online
         file_and_job = native_interface.file_and_job
+        image = native_interface.image
 
         # Load the job if it is not already loaded
         job_name = "myJob.job"
@@ -18,6 +19,10 @@ def main():
         # Set the system online to be able to trigg the camera and get results
         if execution_and_online.get_online() == "0":
             execution_and_online.set_online("1")
+
+        # Get the last image from the camera
+        with open('image.bmp', 'wb') as f:
+            f.write(image.read_image()["data"])
 
         # Close the socket connection
         native_interface.close()

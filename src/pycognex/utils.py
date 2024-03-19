@@ -30,7 +30,7 @@ def receive_data(socket: socket.socket) -> str:
     Returns:
         str: The received data as a string.
     """
-    data = socket.recv(1024)
+    data = socket.recv(4096)
     string_data = data.decode('ascii').split('\r\n')
     return string_data
 
@@ -129,3 +129,34 @@ def format_job_data(data: bytes):
     hex_data = data.hex()
     formatted_hex_data = textwrap.wrap(hex_data, 80)
     return "\n".join(formatted_hex_data)
+
+
+def receive_image_data(socket: socket.socket) -> dict:
+    """
+    Receives image data from the given socket.
+
+    Args:
+        socket (socket.socket): The socket to receive data from.
+
+    Returns:
+        bytes: The received image data.
+    """
+    data_received = receive_data(socket)
+    status_code = data_received[0]
+    size = int(data_received[1])
+    image_data = b''
+    # size is divided by 2 because the image data is in hexadecimal format
+    while len(image_data) < size/2:
+        data_received = receive_data(socket)
+        for data in data_received:
+            image_data += hex_to_bytes(data)
+    check_sum = data_received[-2]
+    # remove the checksum from the image data
+    image_data = image_data[:-4]
+
+    return {
+        "status_code": status_code,
+        "size": size,
+        "data": image_data,
+        "checksum": check_sum
+    }
