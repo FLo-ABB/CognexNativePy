@@ -8,7 +8,7 @@ class ExecutionAndOnline:
     def __init__(self, socket: socket.socket):
         self.socket = socket
 
-    def set_online(self, mode: str) -> None:
+    def set_online(self, mode: int) -> None:
         """
         Sets the In-Sight sensor into Online or Offline mode. For more information, see Online/Offline.
         Note:
@@ -18,7 +18,7 @@ class ExecutionAndOnline:
               such as Backup andRestore.
 
         Args:
-            mode (str): "0" for Offline, "1" for Online.
+            mode (int): "0" for Offline, "1" for Online.
 
         Returns:
             None
@@ -27,7 +27,7 @@ class ExecutionAndOnline:
             ValueError: If the mode is not "0" or "1".
             CognexCommandError: If the command to set the Online mode fails.
         """
-        if mode not in ["0", "1"]:
+        if mode not in [0, 1]:
             raise ValueError("The mode must be 0 for Offline or 1 for Online.")
         else:
             command = f"SO{mode}"
@@ -50,26 +50,26 @@ class ExecutionAndOnline:
             else:
                 raise CognexCommandError(f"Unknown status code: {status_code}")
 
-    def get_online(self) -> str:
+    def get_online(self) -> int:
         """
         Returns the Online state of the In-Sight vision system. For more information, see Online/Offline.
 
         Returns:
-            str: The Online state of the vision system ("0" for Offline, "1" for Online).
+            int: The Online state of the vision system ("0" for Offline, "1" for Online).
 
         Raises:
             CognexCommandError: If the command to retrieve the Online state fails.
         """
         command = "GO"
         send_command(self.socket, command)
-        online_state = receive_data(self.socket)[0]
+        online_state = int(receive_data(self.socket)[0])
 
-        if online_state in ["0", "1"]:
-            return online_state
+        if online_state in [0, 1]:
+            return int(online_state)
         else:
             raise CognexCommandError(f"Unknown Online state: {online_state}")
 
-    def set_event(self, event_code: str) -> tuple:
+    def set_event(self, event_code: int) -> tuple:
         """
         Triggers a specified event in the spreadsheet through a Native Mode command.
 
@@ -105,8 +105,7 @@ class ExecutionAndOnline:
             ValueError: If the event code is not between 0 and 8 (inclusive).
             CognexCommandError: If the command to trigger the event fails.
         """
-        event_code_number = int(event_code)
-        if not 0 <= event_code_number <= 8:
+        if not 0 <= event_code <= 8:
             raise ValueError("The event code must be between 0 and 8 (inclusive).")
 
         command = f"SE{event_code}"
@@ -128,7 +127,7 @@ class ExecutionAndOnline:
         else:
             raise CognexCommandError(f"Unknown status code: {status_code}")
 
-    def set_event_and_wait(self, event_code: str) -> int:
+    def set_event_and_wait(self, event_code: int) -> None:
         """
         Triggers a specified event and waits until the command is completed to return a response.
 
@@ -142,7 +141,7 @@ class ExecutionAndOnline:
               for the inspection results.
 
         Args:
-            event_code (str): The Event code to set.
+            event_code (int): The Event code to set.
                             0 to 7 = Specifies a soft trigger (Soft 0, Soft 1, ... Soft 7).
                             8 = Acquire an image and update the spreadsheet. This option requires the AcquireImage function's Trigger parameter to be
                             set to External, Manual or Network.
@@ -154,8 +153,7 @@ class ExecutionAndOnline:
             ValueError: If the event code is not between 0 and 8 (inclusive).
             CognexCommandError: If the command to trigger the event fails.
         """
-        event_code_number = int(event_code)
-        if not 0 <= event_code_number <= 8:
+        if not 0 <= event_code <= 8:
             raise ValueError("The event code must be between 0 and 8 (inclusive).")
 
         command = f"SW{event_code}"
@@ -171,7 +169,7 @@ class ExecutionAndOnline:
         }
 
         if status_code == "1":
-            return status_code
+            return None
         elif status_code in status_messages:
             raise CognexCommandError(status_messages[status_code])
         else:
@@ -202,7 +200,7 @@ class ExecutionAndOnline:
         else:
             raise CognexCommandError(f"Unknown status code: {status_code}")
 
-    def send_message(self, message: str, event_code: str = None) -> int:
+    def send_message(self, message: str, event_code: int = None) -> None:
         """
         Sends a string to an In-Sight spreadsheet over a Native Mode connection, and optionally, triggers a spreadsheet Event.
 
@@ -219,13 +217,12 @@ class ExecutionAndOnline:
         Raises:
             CognexCommandError: If the command to send the message fails.
         """
-        event_code_number = int(event_code)
-        if event_code_number is not None and (not 0 <= event_code_number <= 8):
+        if event_code is not None and (not 0 <= event_code <= 8):
             raise ValueError("The event code must be between 0 and 8 (inclusive).")
 
         command = f'SM"{message}"'
-        if event_code_number is not None:
-            command += f'{event_code_number}'
+        if event_code is not None:
+            command += f'{event_code}'
 
         send_command(self.socket, command)
         status_code = receive_data(self.socket)[0]
@@ -238,7 +235,7 @@ class ExecutionAndOnline:
         }
 
         if status_code == "1":
-            return status_code
+            return None
         elif status_code in status_messages:
             raise CognexCommandError(status_messages[status_code])
         else:

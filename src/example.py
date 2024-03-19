@@ -10,15 +10,15 @@ def main():
         # image = native_interface.image
 
         # Load the job if it is not already loaded
-        job_name = "myJob.job"
+        job_name = "1myJob.job"
         if file_and_job.get_file() != job_name:
-            if execution_and_online.get_online() == "1":
-                execution_and_online.set_online("0")
-                file_and_job.load_file(job_name)
+            if execution_and_online.get_online() == 1:
+                execution_and_online.set_online(0)
+            file_and_job.load_file(job_name)
 
         # Set the system online to be able to trigg the camera and get results
-        if execution_and_online.get_online() == "0":
-            execution_and_online.set_online("1")
+        if execution_and_online.get_online() == 0:
+            execution_and_online.set_online(1)
 
         # Get the last image from the camera
         # with open('image.bmp', 'wb') as f:

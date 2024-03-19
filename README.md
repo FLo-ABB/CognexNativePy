@@ -37,19 +37,25 @@ from pycognex import NativeInterface
 def main():
     try:
         # Create a socket connection to the Cognex In-Sight vision system and log in
-        native_interface = NativeInterface('192.168.103.2', 'admin', '')
-        exectution_and_online = native_interface.exectution_and_online
+        native_interface = NativeInterface('192.168.56.1', 'admin', '')
+        execution_and_online = native_interface.execution_and_online
         file_and_job = native_interface.file_and_job
+        image = native_interface.image
 
         # Load the job if it is not already loaded
-        if exectution_and_online.get_online() == 1:
-            exectution_and_online.set_online(0)
-        file_and_job.load_file("item1.job")
-        exectution_and_online.set_online(1)
+        job_name = "myJob.job"
+        if file_and_job.get_file() != job_name:
+            if execution_and_online.get_online() == 1:
+                execution_and_online.set_online(0)
+                file_and_job.load_file(job_name)
 
         # Set the system online to be able to trigg the camera and get results
-        if exectution_and_online.get_online() == 0:
-            exectution_and_online.set_online(1)
+        if execution_and_online.get_online() == 0:
+            execution_and_online.set_online(1)
+
+        # Get the last image from the camera
+        with open('image.bmp', 'wb') as f:
+            f.write(image.read_image()["data"])
 
         # Close the socket connection
         native_interface.close()
