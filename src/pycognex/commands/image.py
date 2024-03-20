@@ -1,7 +1,7 @@
 import socket
 
 from pycognex.CognexCommandError import CognexCommandError
-from pycognex.utils import receive_data_from_socket, send_command
+from pycognex.utils import receive_data_from_socket, send_command, format_data, receive_data
 
 
 class Image:
@@ -90,21 +90,27 @@ class Image:
             CognexCommandError: If the command to write the image data fails.
 
         """
-        # TODO
-        # status_messages = {
-        #     "0": "Unrecognized command.",
-        #     "-2": "The image could not be written, or the image data is invalid.",
-        #     "-3": "The checksum failed. The checksum does not match the image data.",
-        #     "-4": "The In-Sight sensor is out of memory.",
-        #     "-6": "User does not have Full Access to execute the command. For more information, see Cognex Documentation.",
-        # }
+        # TODO: actual state, hanging on the status_code reception
+        send_command(self.socket, "WB")
+        send_command(self.socket, f"{image_size}")
+        send_command(self.socket, f"{format_data(image_data)}")
+        send_command(self.socket, f"{image_checksum}")
+        status_code = receive_data(self.socket)[0]
 
-        # if status_code == "1":
-        #     return None
-        # elif status_code in status_messages:
-        #     raise CognexCommandError(status_messages[status_code])
-        # else:
-        #     raise CognexCommandError(f"Unknown status code: {status_code}")
+        status_messages = {
+            "0": "Unrecognized command.",
+            "-2": "The image could not be written, or the image data is invalid.",
+            "-3": "The checksum failed. The checksum does not match the image data.",
+            "-4": "The In-Sight sensor is out of memory.",
+            "-6": "User does not have Full Access to execute the command. For more information, see Cognex Documentation.",
+        }
+
+        if status_code == "1":
+            return None
+        elif status_code in status_messages:
+            raise CognexCommandError(status_messages[status_code])
+        else:
+            raise CognexCommandError(f"Unknown status code: {status_code}")
 
     def write_image(self, image_size: int, image_data: bytes, image_checksum: str) -> None:
         """
@@ -122,19 +128,25 @@ class Image:
             CognexCommandError: If the command to write the image data fails.
 
         """
-        # TODO
+        # TODO: actual state, hanging on the status_code reception
+        send_command(self.socket, "WI")
+        send_command(self.socket, f"{image_size}")
+        send_command(self.socket, f"{format_data(image_data)}")
+        send_command(self.socket, f"{image_checksum}")
 
-        # status_messages = {
-        #     "0": "Unrecognized command.",
-        #     "-2": "The image could not be written, or the image data is invalid.",
-        #     "-3": "The checksum failed. The checksum does not match the image data.",
-        #     "-4": "The In-Sight sensor is out of memory.",
-        #     "-6": "User does not have Full Access to execute the command. For more information, see Cognex Documentation.",
-        # }
+        status_code = receive_data(self.socket)[0]
 
-        # if status_code == "1":
-        #     return None
-        # elif status_code in status_messages:
-        #     raise CognexCommandError(status_messages[status_code])
-        # else:
-        #     raise CognexCommandError(f"Unknown status code: {status_code}")
+        status_messages = {
+            "0": "Unrecognized command.",
+            "-2": "The image could not be written, or the image data is invalid.",
+            "-3": "The checksum failed. The checksum does not match the image data.",
+            "-4": "The In-Sight sensor is out of memory.",
+            "-6": "User does not have Full Access to execute the command. For more information, see Cognex Documentation.",
+        }
+
+        if status_code == "1":
+            return None
+        elif status_code in status_messages:
+            raise CognexCommandError(status_messages[status_code])
+        else:
+            raise CognexCommandError(f"Unknown status code: {status_code}")

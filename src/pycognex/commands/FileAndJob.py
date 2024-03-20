@@ -1,5 +1,5 @@
 from pycognex.CognexCommandError import CognexCommandError
-from pycognex.utils import (format_job_data, receive_data,
+from pycognex.utils import (format_data, receive_data,
                             receive_data_from_socket, send_command)
 
 
@@ -163,7 +163,7 @@ class FileAndJob:
         send_command(self.socket, "WF")
         send_command(self.socket, f"{filename}")
         send_command(self.socket, f"{size}")
-        send_command(self.socket, f"{format_job_data(data)}")
+        send_command(self.socket, f"{format_data(data)}")
         send_command(self.socket, f"{checksum}")
 
         status_code = receive_data(self.socket)[0]
@@ -414,7 +414,7 @@ class FileAndJob:
         send_command(self.socket, f"WJ{job_id}")
         send_command(self.socket, f"{job_name}")
         send_command(self.socket, f"{job_size}")
-        send_command(self.socket, f"{format_job_data(job_data)}")
+        send_command(self.socket, f"{format_data(job_data)}")
         send_command(self.socket, f"{job_checksum}")
         status_code = receive_data(self.socket)[0]
 

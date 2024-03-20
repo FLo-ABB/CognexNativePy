@@ -97,7 +97,7 @@ def login_to_cognex_system(socket: socket.socket, user: str, password: str):
             raise CognexCommandError(f'Error logging in, expected "{expected_response}"')
 
 
-def format_job_data(data: bytes):
+def format_data(data: bytes):
     """
     Formats the given data as a hexadecimal string with a maximum of 80 characters per line.
 

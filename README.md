@@ -79,65 +79,65 @@ branch. Pull requests are warmly welcome.
 
 | Command     | Implemented | Tested |
 | ----------- | ----------- | ------ |
-| Load File   | Yes         | Yes    |
-| Store File  | Yes         | Yes    |
-| Read File   | Yes         | Yes    |
-| Write File  | Yes         | Yes    |
-| Delete File | Yes         | Yes    |
-| Get File    | Yes         | Yes    |
-| Set Job     | Yes         | Yes    |
-| Store Job   | Yes         | Yes    |
-| Read Job    | Yes         | Yes    |
-| Write Job   | Yes         | Yes    |
-| Delete Job  | Yes         | Yes    |
-| Get Job     | Yes         | Yes    |
+| Load File   | ✅           | ✅      |
+| Store File  | ✅           | ✅      |
+| Read File   | ✅           | ✅      |
+| Write File  | ✅           | ✅      |
+| Delete File | ✅           | ✅      |
+| Get File    | ✅           | ✅      |
+| Set Job     | ✅           | ✅      |
+| Store Job   | ✅           | ✅      |
+| Read Job    | ✅           | ✅      |
+| Write Job   | ✅           | ✅      |
+| Delete Job  | ✅           | ✅      |
+| Get Job     | ✅           | ✅      |
 
 ### Image Commands (4 commands)
 
 | Command     | Implemented | Tested |
 | ----------- | ----------- | ------ |
-| Read BMP    | Yes         | Yes    |
-| Read Image  | Yes         | Yes    |
-| Write BMP   | No          | No     |
-| Write Image | No          | No     |
+| Read BMP    | ✅           | ✅      |
+| Read Image  | ✅           | ✅      |
+| Write BMP   | ✅           | ❌      |
+| Write Image | ✅           | ❌      |
 
 ### Settings & Cell Value Commands (11 commands)
 
 | Command             | Implemented | Tested |
 | ------------------- | ----------- | ------ |
-| Get Value           | No          | No     |
-| Set Integer         | No          | No     |
-| Set Float           | No          | No     |
-| Set Region          | No          | No     |
-| Set String          | No          | No     |
-| Get Info            | No          | No     |
-| Read Settings       | No          | No     |
-| Write Settings      | No          | No     |
-| Store Settings      | No          | No     |
-| Set IP Address Lock | No          | No     |
-| Get IP Address Lock | No          | No     |
+| Get Value           | ⏳           | ⏳      |
+| Set Integer         | ⏳           | ⏳      |
+| Set Float           | ⏳           | ⏳      |
+| Set Region          | ⏳           | ⏳      |
+| Set String          | ⏳           | ⏳      |
+| Get Info            | ⏳           | ⏳      |
+| Read Settings       | ⏳           | ⏳      |
+| Write Settings      | ⏳           | ⏳      |
+| Store Settings      | ⏳           | ⏳      |
+| Set IP Address Lock | ⏳           | ⏳      |
+| Get IP Address Lock | ⏳           | ⏳      |
 
 ### Execution & Online Commands (6 commands)
 
 | Command            | Implemented | Tested |
 | ------------------ | ----------- | ------ |
-| Set Online         | Yes         | Yes    |
-| Get Online         | Yes         | Yes    |
-| Set Event          | Yes         | Yes    |
-| Set Event and Wait | Yes         | Yes    |
-| Reset System       | Yes         | No     |
-| Send Message       | Yes         | Yes    |
+| Set Online         | ✅           | ✅      |
+| Get Online         | ✅           | ✅      |
+| Set Event          | ✅           | ✅      |
+| Set Event and Wait | ✅           | ✅      |
+| Reset System       | ✅           | ⏳      |
+| Send Message       | ✅           | ✅      |
 
 ## Key Performance Indicators 🎯
 
 | Indicator                     | Count |
 | ----------------------------- | ----- |
 | Total of commands             | 34    |
-| Total of implemented commands | 21    |
-| Total of tested commands      | 18    |
+| Total of implemented commands | 23    |
+| Total of tested commands      | 22    |
 
 ### Progress 
 
 🟦🟦🟦🟦🟦🟦⬛⬛⬛⬛ : Implementation
 
-🟩🟩🟩🟩🟩⬛⬛⬛⬛⬛  : Testing
+🟩🟩🟩🟩🟩🟩⬛⬛⬛⬛  : Testing
