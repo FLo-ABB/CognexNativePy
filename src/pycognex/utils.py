@@ -107,9 +107,9 @@ def format_job_data(data: bytes):
     Returns:
         str: The formatted hexadecimal string.
     """
-    hex_data = data.hex()
+    hex_data = data.hex().upper()
     formatted_hex_data = textwrap.wrap(hex_data, 80)
-    return "\n".join(formatted_hex_data)
+    return "\r\n".join(formatted_hex_data)
 
 
 def receive_data_from_socket(socket: socket.socket, data_type: str) -> dict:

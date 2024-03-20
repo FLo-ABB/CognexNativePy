@@ -82,13 +82,13 @@ branch. Pull requests are warmly welcome.
 | Load File   | Yes         | Yes    |
 | Store File  | Yes         | Yes    |
 | Read File   | Yes         | Yes    |
-| Write File  | Yes         | No     |
+| Write File  | Yes         | Yes    |
 | Delete File | Yes         | Yes    |
 | Get File    | Yes         | Yes    |
 | Set Job     | Yes         | Yes    |
 | Store Job   | Yes         | Yes    |
 | Read Job    | Yes         | Yes    |
-| Write Job   | Yes         | No     |
+| Write Job   | Yes         | Yes    |
 | Delete Job  | Yes         | Yes    |
 | Get Job     | Yes         | Yes    |
 
@@ -134,7 +134,7 @@ branch. Pull requests are warmly welcome.
 | ----------------------------- | ----- |
 | Total of commands             | 34    |
 | Total of implemented commands | 21    |
-| Total of tested commands      | 17    |
+| Total of tested commands      | 18    |
 
 ### Progress 
 

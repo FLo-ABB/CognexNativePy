@@ -160,9 +160,13 @@ class FileAndJob:
         Raises:
             CognexCommandError: If the command to write the file fails.
         """
-        formatted_data = format_job_data(data)
-        command = f"WF[{filename}][{size}][{formatted_data}][{checksum}]"
-        status_code = send_command(self.socket, command)
+        send_command(self.socket, "WF")
+        send_command(self.socket, f"{filename}")
+        send_command(self.socket, f"{size}")
+        send_command(self.socket, f"{format_job_data(data)}")
+        send_command(self.socket, f"{checksum}")
+
+        status_code = receive_data(self.socket)[0]
 
         status_messages = {
             "0": "Unrecognized command.",
@@ -407,9 +411,12 @@ class FileAndJob:
         if not 0 <= job_id <= 999:
             raise ValueError("The job ID must be between 0 and 999 (inclusive).")
 
-        job_data_hex = format_job_data(job_data)
-        command = f"WJ[{job_id}][{job_name}][{job_size}][{job_data_hex}][{job_checksum}]"
-        status_code = send_command(self.socket, command)
+        send_command(self.socket, f"WJ{job_id}")
+        send_command(self.socket, f"{job_name}")
+        send_command(self.socket, f"{job_size}")
+        send_command(self.socket, f"{format_job_data(job_data)}")
+        send_command(self.socket, f"{job_checksum}")
+        status_code = receive_data(self.socket)[0]
 
         status_messages = {
             "0": "Unrecognized command.",
