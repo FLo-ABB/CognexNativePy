@@ -80,13 +80,13 @@ branch. Pull requests are warmly welcome.
 | Command     | Implemented | Tested |
 | ----------- | ----------- | ------ |
 | Load File   | Yes         | Yes    |
-| Store File  | Yes         | No     |
+| Store File  | Yes         | Yes    |
 | Read File   | Yes         | Yes    |
 | Write File  | Yes         | No     |
 | Delete File | Yes         | Yes    |
 | Get File    | Yes         | Yes    |
 | Set Job     | Yes         | Yes    |
-| Store Job   | Yes         | No     |
+| Store Job   | Yes         | Yes    |
 | Read Job    | Yes         | Yes    |
 | Write Job   | Yes         | No     |
 | Delete Job  | Yes         | Yes    |
@@ -134,10 +134,10 @@ branch. Pull requests are warmly welcome.
 | ----------------------------- | ----- |
 | Total of commands             | 34    |
 | Total of implemented commands | 21    |
-| Total of tested commands      | 15    |
+| Total of tested commands      | 17    |
 
 ### Progress 
 
 🟦🟦🟦🟦🟦🟦⬛⬛⬛⬛ : Implementation
 
-🟩🟩🟩🟩⬛⬛⬛⬛⬛⬛  : Testing
+🟩🟩🟩🟩🟩⬛⬛⬛⬛⬛  : Testing

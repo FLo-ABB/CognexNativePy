@@ -1,6 +1,6 @@
 from pycognex.CognexCommandError import CognexCommandError
 from pycognex.utils import (format_job_data, receive_data,
-                            receive_file_data, send_command)
+                            receive_data_from_socket, send_command)
 
 
 class FileAndJob:
@@ -74,12 +74,12 @@ class FileAndJob:
             CognexCommandError: If the command to save the file fails.
 
         """
-        if not filename.endswith(".JOB"):
+        if not filename.upper().endswith(".JOB"):
             raise ValueError("The filename must have a .JOB extension.")
         else:
             command = f"TF{filename}"
             send_command(self.socket, command)
-            status_code = receive_data(self.socket)
+            status_code = receive_data(self.socket)[0]
 
             status_messages = {
                 "0": "Unrecognized command.",
@@ -118,26 +118,20 @@ class FileAndJob:
         """
         command = f"RF{filename}"
         send_command(self.socket, command)
-        data_received = receive_file_data(self.socket)
+        data_received = receive_data_from_socket(self.socket, 'file')
         status_code = data_received["status_code"]
-        job_name = data_received["file_name"]
-        job_size = data_received["size"]
-        job_data = data_received["data"]
-        job_checksum = data_received["checksum"]
-
         status_messages = {
             "0": "Unrecognized command.",
             "-1": "The job filename is missing.",
             "-2": "There is no job saved with the given name or the job data is invalid, therefore the command could not be executed.",
             "-6": "User does not have Full Access to execute the command. For more information, see Cognex Documentation."
         }
-
         if status_code == "1":
             return {
-                "name": job_name,
-                "size": job_size,
-                "data": job_data,
-                "checksum": job_checksum
+                "name": data_received["file_name"],
+                "size": data_received["size"],
+                "data": data_received["data"],
+                "checksum": data_received["checksum"]
             }
         elif status_code in status_messages:
             raise CognexCommandError(status_messages[status_code])
@@ -165,7 +159,6 @@ class FileAndJob:
 
         Raises:
             CognexCommandError: If the command to write the file fails.
-
         """
         formatted_data = format_job_data(data)
         command = f"WF[{filename}][{size}][{formatted_data}][{checksum}]"
@@ -332,14 +325,16 @@ class FileAndJob:
         if not 0 <= job_id <= 999:
             raise ValueError("The job ID must be between 0 and 999 (inclusive).")
 
-        command = f"TJ[{job_id}][{job_name}]"
-        status_code = send_command(self.socket, command)
+        command = f"TJ{job_id}{job_name}"
+        send_command(self.socket, command)
+        data_received = receive_data(self.socket)
+        status_code = data_received[0]
 
         status_messages = {
-            0: "Unrecognized command.",
-            -1: "The job ID number is invalid or it is not an integer.",
-            -2: "The sensor is Online, therefore the command could not be executed.",
-            -6: "User does not have Full Access to execute the command. For more information, see Cognex Documentation.",
+            "0": "Unrecognized command.",
+            "-1": "The job ID number is invalid or it is not an integer.",
+            "-2": "The sensor is Online, therefore the command could not be executed.",
+            "-6": "User does not have Full Access to execute the command. For more information, see Cognex Documentation.",
         }
 
         if status_code == "1":
@@ -369,13 +364,8 @@ class FileAndJob:
 
         command = f"RJ{job_id}"
         send_command(self.socket, command)
-        data_received = receive_file_data(self.socket)
+        data_received = receive_data_from_socket(self.socket, 'job')
         status_code = data_received["status_code"]
-        job_name = data_received["file_name"]
-        job_size = data_received["size"]
-        job_data = data_received["data"]
-        job_checksum = data_received["checksum"]
-
         status_messages = {
             "0": "Unrecognized command.",
             "-1": "The job ID number is outside the allowable range (0 to 999).",
@@ -383,13 +373,12 @@ class FileAndJob:
             "-4": "The In-Sight sensor is out of memory.",
             "-6": "User does not have Full Access to execute the command. For more information, see Cognex Documentation.",
         }
-
         if status_code == "1":
             return {
-                "id": job_name,
-                "size": job_size,
-                "data": job_data,
-                "checksum": job_checksum
+                "id": data_received["file_name"],
+                "size": data_received["size"],
+                "data": data_received["data"],
+                "checksum": data_received["checksum"]
             }
         elif status_code in status_messages:
             raise CognexCommandError(status_messages[status_code])

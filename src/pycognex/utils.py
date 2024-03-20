@@ -1,6 +1,7 @@
 import socket
-from pycognex.CognexCommandError import CognexCommandError
 import textwrap
+
+from pycognex.CognexCommandError import CognexCommandError
 
 PORT = 23
 
@@ -20,15 +21,15 @@ def send_command(socket: socket.socket, string_command: str):
     socket.sendall(command)
 
 
-def receive_data(socket: socket.socket) -> str:
+def receive_data(socket: socket.socket) -> list:
     """
-    Receives data from the given socket and returns it as a string.
+    Receives data from the given socket and returns it as a list of strings.
 
     Args:
         socket (socket.socket): The socket to receive data from.
 
     Returns:
-        str: The received data as a string.
+        list: The received data as a list of strings.
     """
     data = socket.recv(4096)
     string_data = data.decode('ascii').split('\r\n')
@@ -80,8 +81,8 @@ def login_to_cognex_system(socket: socket.socket, user: str, password: str):
 
     Args:
         socket (socket.socket): The socket connection to the Cognex system.
-        user (str): The username to log in with.
-        password (str): The password to log in with.
+        user (str): The username to log in with (default is 'admin').
+        password (str): The password to log in with (default is '')
 
     Returns:
         None
@@ -94,26 +95,6 @@ def login_to_cognex_system(socket: socket.socket, user: str, password: str):
                 send_command(socket, command)
         else:
             raise CognexCommandError(f'Error logging in, expected "{expected_response}"')
-
-
-def hex_to_bytes(hex_string: str) -> bytes:
-    """
-    Converts a hexadecimal string to bytes.
-
-    Args:
-        hex_string (str): The hexadecimal string to convert.
-
-    Returns:
-        bytes: The converted bytes.
-
-    Raises:
-        ValueError: If the input string is not a valid hexadecimal string.
-
-    Example:
-        >>> hex_to_bytes('48656c6c6f20576f726c64')
-        b'Hello World'
-    """
-    return bytes.fromhex(hex_string)
 
 
 def format_job_data(data: bytes):
@@ -131,63 +112,42 @@ def format_job_data(data: bytes):
     return "\n".join(formatted_hex_data)
 
 
-def receive_image_data(socket: socket.socket) -> dict:
+def receive_data_from_socket(socket: socket.socket, data_type: str) -> dict:
     """
-    Receives image data from the given socket.
+    Receives data from the given socket.
 
     Args:
         socket (socket.socket): The socket to receive data from.
+        data_type (str): The type of data to receive. Should be either 'image', 'file' or 'job'.
 
     Returns:
-        bytes: The received image data.
+        dict: A dictionary containing the received data.
     """
+    if data_type not in ['image', 'file', 'job']:
+        raise ValueError(f"Invalid data type: {data_type}, accepted values are 'image', 'file' and 'job'")
     data_received = receive_data(socket)
     status_code = data_received[0]
-    size = int(data_received[1])
-    image_data = b''
-    # size is divided by 2 because the image data is in hexadecimal format
-    while len(image_data) < size/2:
+    size = int(data_received[1 if data_type == 'image' else 2])
+    data = b''
+    # size is divided by 2 because the data is in hexadecimal format
+    while len(data) < size/2:
         data_received = receive_data(socket)
-        for data in data_received:
-            image_data += hex_to_bytes(data)
-    check_sum = data_received[-2]
-    # remove the checksum from the image data
-    image_data = image_data[:-4]
-
-    return {
+        for received in data_received:
+            data += bytes.fromhex(received)
+    if data_type == 'image':
+        check_sum = data_received[-2]
+        data = data[:-4]
+    else:
+        check_sum = receive_data(socket)[0]
+    return_dict = {
         "status_code": status_code,
         "size": size,
-        "data": image_data,
+        "data": data,
         "checksum": check_sum
     }
-
-
-def receive_file_data(socket: socket.socket) -> dict:
-    """
-    Receives file data from the given socket.
-
-    Args:
-        socket (socket.socket): The socket to receive data from.
-
-    Returns:
-        dict: A dictionary containing the received file data.
-    """
-    data_received = receive_data(socket)
-    status_code = data_received[0]
-    file_name = data_received[1]
-    size = int(data_received[2])
-    file_data = b''
-    # size is divided by 2 because the file data is in hexadecimal format
-    while len(file_data) < size/2:
-        data_received = receive_data(socket)
-        for data in data_received:
-            file_data += hex_to_bytes(data)
-    check_sum = receive_data(socket)[0]
-
-    return {
-        "status_code": status_code,
-        "file_name": file_name,
-        "size": size,
-        "data": file_data,
-        "checksum": check_sum
-    }
+    if status_code == "1":
+        if (data_type == 'file' or data_type == 'job'):
+            return_dict["file_name"] = data_received[1]
+        return return_dict
+    else:
+        return {"status_code": status_code}

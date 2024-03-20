@@ -1,7 +1,7 @@
 import socket
 
 from pycognex.CognexCommandError import CognexCommandError
-from pycognex.utils import receive_image_data, send_command
+from pycognex.utils import receive_data_from_socket, send_command
 
 
 class Image:
@@ -25,23 +25,18 @@ class Image:
         """
         command = "RB"
         send_command(self.socket, command)
-        data_received = receive_image_data(self.socket)
+        data_received = receive_data_from_socket(self.socket, 'image')
         status_code = data_received["status_code"]
-        image_size = data_received["size"]
-        image_data_bytes = data_received["data"]
-        image_checksum = data_received["checksum"]
-
         status_messages = {
             "0": "Unrecognized command.",
             "-4": "The In-Sight sensor is out of memory.",
             "-6": "User does not have Full Access to execute the command. For more information, see Cognex Documentation.",
         }
-
         if status_code == "1":
             return {
-                "size": image_size,
-                "data": image_data_bytes,
-                "checksum": image_checksum,
+                "size": data_received["size"],
+                "data": data_received["data"],
+                "checksum": data_received["checksum"],
             }
         elif status_code in status_messages:
             raise CognexCommandError(status_messages[status_code])
@@ -61,23 +56,18 @@ class Image:
         """
         command = "RI"
         send_command(self.socket, command)
-        data_received = receive_image_data(self.socket)
+        data_received = receive_data_from_socket(self.socket, 'image')
         status_code = data_received["status_code"]
-        image_size = data_received["size"]
-        image_data_bytes = data_received["data"]
-        image_checksum = data_received["checksum"]
-
         status_messages = {
             0: "Unrecognized command.",
             -4: "The In-Sight sensor is out of memory.",
             -6: "User does not have Full Access to execute the command. For more information, see Cognex Documentation.",
         }
-
         if status_code == "1":
             return {
-                "size": image_size,
-                "data": image_data_bytes,
-                "checksum": image_checksum,
+                "size": data_received["size"],
+                "data": data_received["data"],
+                "checksum": data_received["checksum"],
             }
         elif status_code in status_messages:
             raise CognexCommandError(status_messages[status_code])
