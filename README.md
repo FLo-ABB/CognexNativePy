@@ -108,10 +108,10 @@ branch. Pull requests are warmly welcome.
 | Get Value           | ✅           | ✅      |
 | Set Integer         | ✅           | ✅      |
 | Set Float           | ✅           | ✅      |
-| Set Region          | ⏳           | ⏳      |
-| Set String          | ⏳           | ⏳      |
-| Get Info            | ⏳           | ⏳      |
-| Read Settings       | ⏳           | ⏳      |
+| Set Region          | ✅           | ✅      |
+| Set String          | ✅           | ✅      |
+| Get Info            | ✅           | ✅      |
+| Read Settings       | ✅           | ✅      |
 | Write Settings      | ⏳           | ⏳      |
 | Store Settings      | ⏳           | ⏳      |
 | Set IP Address Lock | ⏳           | ⏳      |
@@ -133,11 +133,11 @@ branch. Pull requests are warmly welcome.
 | Indicator                     | Count |
 | ----------------------------- | ----- |
 | Total of commands             | 34    |
-| Total of implemented commands | 26    |
-| Total of tested commands      | 25    |
+| Total of implemented commands | 30    |
+| Total of tested commands      | 29    |
 
 ### Progress 
 
 🟦🟦🟦🟦🟦🟦🟦🟦⬛⬛ : Implementation
 
-🟩🟩🟩🟩🟩🟩🟩⬛⬛⬛  : Testing
+🟩🟩🟩🟩🟩🟩🟩🟩⬛⬛  : Testing

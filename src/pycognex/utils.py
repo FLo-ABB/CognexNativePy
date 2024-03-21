@@ -125,16 +125,16 @@ def receive_data_from_socket(socket: socket.socket, data_type: str) -> dict:
 
     Args:
         socket (socket.socket): The socket to receive data from.
-        data_type (str): The type of data to receive. Should be either 'image', 'file' or 'job'.
+        data_type (str): The type of data to receive. Should be either 'image', 'file', 'job' or 'settings'.
 
     Returns:
         dict: A dictionary containing the received data.
     """
-    if data_type not in ['image', 'file', 'job']:
+    if data_type not in ['image', 'file', 'job', 'settings']:
         raise ValueError(f"Invalid data type: {data_type}, accepted values are 'image', 'file' and 'job'")
     data_received = receive_data(socket)
     status_code = data_received[0]
-    size = int(data_received[1 if data_type == 'image' else 2])
+    size = int(data_received[1 if (data_type == 'image' or data_type == 'settings') else 2])
     data = b''
     # size is divided by 2 because the data is in hexadecimal format
     while len(data) < size/2:

@@ -26,11 +26,32 @@ def main():
             f.write(image.read_image()["data"])
 
         # Get the value of the cell B010 (spreadsheet view)
-        print(settings_and_cells_values.get_value_spreadsheet_view("B", 10))
+        print(settings_and_cells_values.get_value("B", 10))
         # Get the value of the symbolic tag "Pattern_1.Fixture.X" (EasyBuilder view)
-        print(settings_and_cells_values.get_value_easybuilder_view("Pattern_1.Fixture.X"))
-        # Set the value of the symbolic tag "Pattern_1.Horizontal_Offset" to 69.1 (EasyBuilder view)
-        settings_and_cells_values.set_float_easybuilder_view("Pattern_1.Horizontal_Offset", 69.1)
+        print(settings_and_cells_values.get_value("Pattern_1.Fixture.X"))
+        # Set the value of the cell D019 (spreadsheet view) to 53
+        settings_and_cells_values.set_integer_value("D", 19, 53)
+        # Set the value of the symbolic tag "Pattern_1.Accept_Threshold" to 52
+        settings_and_cells_values.set_integer_value("Pattern_1.Accept_Threshold", 52)
+        # Set the value of the symbolic tag "Pattern_1.Horizontal_Offset" to 69.3 (EasyBuilder view)
+        settings_and_cells_values.set_float_value("Pattern_1.Horizontal_Offset", 69.3)
+        # Set the value of the cell D021 (spreadsheet view) to 69.4
+        settings_and_cells_values.set_float_value("D", 21, 69.4)
+        # Set the region of the cell A031 (spreadsheet view)
+        execution_and_online.set_online(0)
+        # Set the region of the symbolic tag "Acquisition.Exposure_Region" (EasyBuilder view)
+        settings_and_cells_values.set_region("Acquisition.Exposure_Region", 17.9, 32.9, 125.3, 250.4, 0.0, 0.0)
+        # Set the region of the cell A009 (spreadsheet view)
+        settings_and_cells_values.set_region("A", 9, 69.69, 32.9, 125.3, 250.4, 0.0, 0.0)
+        # Set the string of the cell A034
+        settings_and_cells_values.set_string("A", 34, "Hello World")
+        execution_and_online.set_online(1)
+
+        # Get the information of the settings and cells values
+        print(settings_and_cells_values.get_info())
+        # data_received = settings_and_cells_values.read_settings()
+        # with open('settings.txt', 'wb') as f:
+        #     f.write(data_received["settings"])
 
         # Close the socket connection
         native_interface.close()
