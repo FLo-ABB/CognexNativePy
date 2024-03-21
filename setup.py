@@ -2,6 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='CognexNativePy',
+    version='1.0.1',
     description='A Python library for communicating with Cognex In-Sight vision systems. Wrapper of the native commands',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
