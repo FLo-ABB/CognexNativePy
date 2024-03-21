@@ -3,7 +3,7 @@ import socket
 from typing import Union
 
 from pycognex.CognexCommandError import CognexCommandError
-from pycognex.utils import receive_data, send_command, receive_data_from_socket
+from pycognex.utils import receive_data, send_command, receive_data_from_socket, format_data
 
 
 class SettingsAndCellsValues:
@@ -352,3 +352,126 @@ class SettingsAndCellsValues:
             raise CognexCommandError(status_messages[status_code])
         else:
             raise CognexCommandError(f"Unknown status code: {status_code}")
+
+    def write_settings(self, size: int, settings: str, checksum: str) -> None:
+        """
+        Sends the system settings data from a remote device to the In-Sight vision system.
+
+        Note: The In-Sight sensor must be Offline.
+
+        Args:
+            size (int): The size (in bytes) of the settings.
+            settings (str): The data for the settings, encoded as ASCII hexadecimal values formatted to 80 characters per line.
+            checksum (str): Four ASCII hexadecimal bytes that are a checksum of the system settings data.
+
+        Returns:
+            None
+
+        Raises:
+            ValueError: If the size is not a positive integer, the settings string is empty, or the checksum string is empty.
+            CognexCommandError: If the command to write the settings fails.
+
+        """
+        if size <= 0:
+            raise ValueError("The size must be a positive integer.")
+
+        if not settings or not checksum:
+            raise ValueError("The settings and checksum strings must not be empty.")
+
+        send_command(self.socket, "WS")
+        send_command(self.socket, f"{size}")
+        send_command(self.socket, f"{format_data(settings)}")
+        send_command(self.socket, f"{checksum}")
+        data_received = receive_data(self.socket)
+        status_code = data_received[0]
+        status_messages = {
+            "0": "Unrecognized command.",
+            "-2": "The settings could not be saved.",
+            "-3": "The checksum failed. The checksum does not match the settings data.",
+            "-4": "The In-Sight vision system is out of memory.",
+        }
+
+        if status_code == "1":
+            return None
+        elif status_code in status_messages:
+            raise CognexCommandError(status_messages[status_code])
+        else:
+            raise CognexCommandError(f"Unknown status code: {status_code}")
+
+    def store_settings(self) -> None:
+        """
+        Stores the In-Sight sensor settings to the proc.set file. For more information, see PROC.SET.
+
+        Returns:
+            None
+
+        Raises:
+            CognexCommandError: If the command to store the settings fails.
+
+        """
+        command = "TS"
+        send_command(self.socket, command)
+        data_received = receive_data(self.socket)
+        status_code = data_received[0]
+        status_messages = {
+            "0": "Unrecognized command.",
+            "-2": "The sensor is Online, therefore the command could not be executed.",
+        }
+
+        if status_code == "1":
+            return None
+        elif status_code in status_messages:
+            raise CognexCommandError(status_messages[status_code])
+        else:
+            raise CognexCommandError(f"Unknown status code: {status_code}")
+
+    def set_ip_address_lock(self, lock: int) -> None:
+        """
+        Prevents unauthorized changes to an In-Sight sensor's IP address.
+
+        Args:
+            lock (int): 0 to unlock the IP address, 1 to lock the IP address.
+
+        Returns:
+            None
+
+        Raises:
+            ValueError: If the lock value is not 0 or 1.
+            CognexCommandError: If the command to set the IP address lock fails.
+
+        """
+        if lock not in [0, 1]:
+            raise ValueError("The lock value must be 0 or 1.")
+
+        command = f"SL{lock}"
+        send_command(self.socket, command)
+        data_received = receive_data(self.socket)
+        status_code = data_received[0]
+        status_messages = {
+            "0": "Unrecognized command.",
+            "-1": "The value given for Int is either out of range or is not a valid integer.",
+            "-2": "The command could not be executed.",
+        }
+
+        if status_code == "1":
+            return None
+        elif status_code in status_messages:
+            raise CognexCommandError(status_messages[status_code])
+        else:
+            raise CognexCommandError(f"Unknown status code: {status_code}")
+
+    def get_ip_address_lock(self) -> int:
+        """
+        Returns the security status of the IP address on an In-Sight sensor.
+
+        Returns:
+            int: The security status of the IP address (0 for unlocked, 1 for locked).
+
+        Raises:
+            CognexCommandError: If the command to get the IP address lock fails.
+
+        """
+        command = "GL"
+        send_command(self.socket, command)
+        data_received = receive_data(self.socket)
+        return int(data_received[0])

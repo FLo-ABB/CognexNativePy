@@ -10,13 +10,6 @@
   - [Usage 📚](#usage-)
   - [Contributing 🤝](#contributing-)
   - [License 📝](#license-)
-  - [Status 🚧](#status-)
-    - [File \& Job Commands (13 commands)](#file--job-commands-13-commands)
-    - [Image Commands (4 commands)](#image-commands-4-commands)
-    - [Settings \& Cell Value Commands (11 commands)](#settings--cell-value-commands-11-commands)
-    - [Execution \& Online Commands (6 commands)](#execution--online-commands-6-commands)
-  - [Key Performance Indicators 🎯](#key-performance-indicators-)
-    - [Progress](#progress)
 
 ## Installation 🚀
 
@@ -41,21 +34,27 @@ def main():
         execution_and_online = native_interface.execution_and_online
         file_and_job = native_interface.file_and_job
         image = native_interface.image
+        settings_and_cells_values = native_interface.settings_and_cells_values
 
         # Load the job if it is not already loaded
-        job_name = "myJob.job"
+        job_name = "1myJob.job"
         if file_and_job.get_file() != job_name:
             if execution_and_online.get_online() == 1:
                 execution_and_online.set_online(0)
-                file_and_job.load_file(job_name)
+            file_and_job.load_file(job_name)
 
-        # Set the system online to be able to trigg the camera and get results
-        if execution_and_online.get_online() == 0:
-            execution_and_online.set_online(1)
-
-        # Get the last image from the camera
+        # Get the last image from the camera and save it as a BMP file
         with open('image.bmp', 'wb') as f:
             f.write(image.read_image()["data"])
+
+        # Get the value of the cell B010 (spreadsheet view)
+        print(settings_and_cells_values.get_value("B", 10))
+        # Set the value of the cell D019 (spreadsheet view) to 53
+        settings_and_cells_values.set_integer_value("D", 19, 53)
+        # Set the value of the symbolic tag "Pattern_1.Horizontal_Offset" to 69.3 (EasyBuilder view)
+        settings_and_cells_values.set_float_value("Pattern_1.Horizontal_Offset", 69.3)
+        # Get the information of the settings and cells values
+        print(settings_and_cells_values.get_info())
 
         # Close the socket connection
         native_interface.close()
@@ -72,72 +71,3 @@ branch. Pull requests are warmly welcome.
 ## License 📝
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-black.svg)](https://opensource.org/licenses/MIT)
-
-## Status 🚧
-
-### File & Job Commands (13 commands)
-
-| Command     | Implemented | Tested |
-| ----------- | ----------- | ------ |
-| Load File   | ✅           | ✅      |
-| Store File  | ✅           | ✅      |
-| Read File   | ✅           | ✅      |
-| Write File  | ✅           | ✅      |
-| Delete File | ✅           | ✅      |
-| Get File    | ✅           | ✅      |
-| Set Job     | ✅           | ✅      |
-| Store Job   | ✅           | ✅      |
-| Read Job    | ✅           | ✅      |
-| Write Job   | ✅           | ✅      |
-| Delete Job  | ✅           | ✅      |
-| Get Job     | ✅           | ✅      |
-
-### Image Commands (4 commands)
-
-| Command     | Implemented | Tested |
-| ----------- | ----------- | ------ |
-| Read BMP    | ✅           | ✅      |
-| Read Image  | ✅           | ✅      |
-| Write BMP   | ✅           | ✅      |
-| Write Image | ✅           | ✅      |
-
-### Settings & Cell Value Commands (11 commands)
-
-| Command             | Implemented | Tested |
-| ------------------- | ----------- | ------ |
-| Get Value           | ✅           | ✅      |
-| Set Integer         | ✅           | ✅      |
-| Set Float           | ✅           | ✅      |
-| Set Region          | ✅           | ✅      |
-| Set String          | ✅           | ✅      |
-| Get Info            | ✅           | ✅      |
-| Read Settings       | ✅           | ✅      |
-| Write Settings      | ⏳           | ⏳      |
-| Store Settings      | ⏳           | ⏳      |
-| Set IP Address Lock | ⏳           | ⏳      |
-| Get IP Address Lock | ⏳           | ⏳      |
-
-### Execution & Online Commands (6 commands)
-
-| Command            | Implemented | Tested |
-| ------------------ | ----------- | ------ |
-| Set Online         | ✅           | ✅      |
-| Get Online         | ✅           | ✅      |
-| Set Event          | ✅           | ✅      |
-| Set Event and Wait | ✅           | ✅      |
-| Reset System       | ✅           | ⏳      |
-| Send Message       | ✅           | ✅      |
-
-## Key Performance Indicators 🎯
-
-| Indicator                     | Count |
-| ----------------------------- | ----- |
-| Total of commands             | 34    |
-| Total of implemented commands | 30    |
-| Total of tested commands      | 29    |
-
-### Progress 
-
-🟦🟦🟦🟦🟦🟦🟦🟦⬛⬛ : Implementation
-
-🟩🟩🟩🟩🟩🟩🟩🟩⬛⬛  : Testing
