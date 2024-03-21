@@ -36,7 +36,7 @@ Each command category is an attribute of the `NativeInterface` class, allowing y
 
 Example of how to use the wrapper:
 ```python
-from pycognex import NativeInterface
+from CognexNativePy import NativeInterface
 
 
 def main():
