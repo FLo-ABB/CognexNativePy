@@ -9,7 +9,6 @@ setup(
     author='Florian LOBERT',
     url='https://github.com/FLo-ABB/CognexNativePy',
     packages=find_packages(where='src'),
-    package_dir={'': 'src/CognexNativePy'},
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
