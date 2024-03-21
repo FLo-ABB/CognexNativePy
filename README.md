@@ -98,8 +98,8 @@ branch. Pull requests are warmly welcome.
 | ----------- | ----------- | ------ |
 | Read BMP    | ✅           | ✅      |
 | Read Image  | ✅           | ✅      |
-| Write BMP   | ✅           | ❌      |
-| Write Image | ✅           | ❌      |
+| Write BMP   | ✅           | ✅      |
+| Write Image | ✅           | ✅      |
 
 ### Settings & Cell Value Commands (11 commands)
 

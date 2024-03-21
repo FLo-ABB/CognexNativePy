@@ -4,6 +4,7 @@ import textwrap
 from pycognex.CognexCommandError import CognexCommandError
 
 PORT = 23
+DEBUG = False
 
 
 def send_command(socket: socket.socket, string_command: str):
@@ -17,6 +18,9 @@ def send_command(socket: socket.socket, string_command: str):
     Returns:
         None
     """
+    if DEBUG:
+        with open('out.txt', 'a') as f:
+            f.write(string_command+'\n')
     command = string_command.encode('ascii') + b'\r\n'
     socket.sendall(command)
 
@@ -33,6 +37,9 @@ def receive_data(socket: socket.socket) -> list:
     """
     data = socket.recv(4096)
     string_data = data.decode('ascii').split('\r\n')
+    if DEBUG:
+        with open('in.txt', 'a') as f:
+            f.write("\n".join(string_data))
     return string_data
 
 
@@ -136,7 +143,7 @@ def receive_data_from_socket(socket: socket.socket, data_type: str) -> dict:
             data += bytes.fromhex(received)
     if data_type == 'image':
         check_sum = data_received[-2]
-        data = data[:-4]
+        data = data[:-2]
     else:
         check_sum = receive_data(socket)[0]
     return_dict = {

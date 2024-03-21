@@ -90,7 +90,6 @@ class Image:
             CognexCommandError: If the command to write the image data fails.
 
         """
-        # TODO: actual state, hanging on the status_code reception
         send_command(self.socket, "WB")
         send_command(self.socket, f"{image_size}")
         send_command(self.socket, f"{format_data(image_data)}")
@@ -128,7 +127,6 @@ class Image:
             CognexCommandError: If the command to write the image data fails.
 
         """
-        # TODO: actual state, hanging on the status_code reception
         send_command(self.socket, "WI")
         send_command(self.socket, f"{image_size}")
         send_command(self.socket, f"{format_data(image_data)}")
