@@ -7,20 +7,32 @@
 - [📷 🐍 CognexNativePy 🐍 📷](#--cognexnativepy--)
   - [Table of Contents 📜](#table-of-contents-)
   - [Installation 🚀](#installation-)
+    - [Using pip 🐍](#using-pip-)
+    - [Manual Installation 📦](#manual-installation-)
   - [Usage 📚](#usage-)
   - [Contributing 🤝](#contributing-)
   - [License 📝](#license-)
 
 ## Installation 🚀
 
-To use this library in your project, first download the repository and place the `CognexNativePy` folder in your project's directory. You can then import the `NativeInterface` class from this library to interact with the Cognex camera. 
+### Using pip 🐍
+
+To install the library using pip, run the following command:
+
+```bash
+pip install CognexNativePy
+```
+
+### Manual Installation 📦
+
+To use this library in your project, first download the repository and place the `CognexNativePy` folder in your project's directory. You can then import the `NativeInterface` class from this library to interact with the Cognex camera. See Usage section for an example.
+
+
+## Usage 📚
 
 The `NativeInterface` class provides four categories of commands: `exectution_and_online`, `file_and_job`, `image`, and `settings_and_cell_value`. Each category corresponds to a set of related commands as documented in the [Cognex Documentation Website](https://support.cognex.com/docs/is_590/web/EN/ise/Content/Communications_Reference/LoadFile.htm?tocpath=Communications%20Reference%7CNative%20Mode%20Communications%7CBasic%20Native%20Mode%20Commands%7CFile%20%26%20Job%20Commands%7C_____1).
 
 Each command category is an attribute of the `NativeInterface` class, allowing you to easily access and execute the commands you need for your specific use case.
-
-
-## Usage 📚
 
 Example of how to use the wrapper:
 ```python
