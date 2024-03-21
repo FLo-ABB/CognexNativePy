@@ -1,7 +1,7 @@
 import socket
 
-from pycognex.CognexCommandError import CognexCommandError
-from pycognex.utils import send_command, receive_data
+from CognexNativePy.CognexCommandError import CognexCommandError
+from CognexNativePy.utils import send_command, receive_data
 
 
 class ExecutionAndOnline:

@@ -2,8 +2,8 @@ import re
 import socket
 from typing import Union
 
-from pycognex.CognexCommandError import CognexCommandError
-from pycognex.utils import receive_data, send_command, receive_data_from_socket, format_data
+from CognexNativePy.CognexCommandError import CognexCommandError
+from CognexNativePy.utils import receive_data, send_command, receive_data_from_socket, format_data
 
 
 class SettingsAndCellsValues:

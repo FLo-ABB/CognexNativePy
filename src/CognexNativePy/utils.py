@@ -1,7 +1,7 @@
 import socket
 import textwrap
 
-from pycognex.CognexCommandError import CognexCommandError
+from CognexNativePy.CognexCommandError import CognexCommandError
 
 PORT = 23
 DEBUG = False

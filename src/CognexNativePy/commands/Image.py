@@ -1,7 +1,7 @@
 import socket
 
-from pycognex.CognexCommandError import CognexCommandError
-from pycognex.utils import receive_data_from_socket, send_command, format_data, receive_data
+from CognexNativePy.CognexCommandError import CognexCommandError
+from CognexNativePy.utils import receive_data_from_socket, send_command, format_data, receive_data
 
 
 class Image:
