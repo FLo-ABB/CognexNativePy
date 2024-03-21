@@ -1,10 +1,10 @@
-# 📷 🐍 pycognex 🐍 📷
+# 📷 🐍 CognexNativePy 🐍 📷
 
-`pycognex` is a Python wrapper for the Cognex native mode commands. It provides a simple and intuitive wrapper to interact with Cognex cameras. It's based on the Cognex native mode commands, which can be found in [Cognex Documentation Website](https://support.cognex.com/docs/is_590/web/EN/ise/Content/Communications_Reference/LoadFile.htm?tocpath=Communications%20Reference%7CNative%20Mode%20Communications%7CBasic%20Native%20Mode%20Commands%7CFile%20%26%20Job%20Commands%7C_____1).
+`CognexNativePy` is a Python wrapper for the Cognex native mode commands. It provides a simple and intuitive wrapper to interact with Cognex cameras. It's based on the Cognex native mode commands, which can be found in [Cognex Documentation Website](https://support.cognex.com/docs/is_590/web/EN/ise/Content/Communications_Reference/LoadFile.htm?tocpath=Communications%20Reference%7CNative%20Mode%20Communications%7CBasic%20Native%20Mode%20Commands%7CFile%20%26%20Job%20Commands%7C_____1).
 
 ## Table of Contents 📜
 
-- [📷 🐍 pycognex 🐍 📷](#--pycognex--)
+- [📷 🐍 CognexNativePy 🐍 📷](#--cognexnativepy--)
   - [Table of Contents 📜](#table-of-contents-)
   - [Installation 🚀](#installation-)
   - [Usage 📚](#usage-)
