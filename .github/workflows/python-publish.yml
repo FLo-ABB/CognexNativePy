@@ -9,7 +9,9 @@
 name: Upload Python Package
 
 on:
+  # when a new release is published by the other workflow
   release:
+
 
 permissions:
   contents: read
