@@ -31,7 +31,7 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
-        NEW_TAG=$(echo $TAG | awk -F. -v OFS=. 'NF==1{print ++$NF}; NF>1{$(NF-1)++; $(NF)=0; print}')
+        NEW_TAG=$(echo $TAG | awk -F. -v OFS=. '{$NF++; print}')
         git tag -a $NEW_TAG -m "Release version $NEW_TAG"
         sed -i "s/version='.*',/version='${NEW_TAG}',/" setup.py
         git commit -am "Bump version to ${NEW_TAG}"
