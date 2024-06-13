@@ -12,6 +12,7 @@
   - [Usage 📚](#usage-)
   - [Contributing 🤝](#contributing-)
   - [License 📝](#license-)
+  - [Known Issues 🐞](#known-issues-)
 
 ## Installation 🚀
 
@@ -87,3 +88,9 @@ branch. Pull requests are warmly welcome.
 ## License 📝
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-black.svg)](https://opensource.org/licenses/MIT)
+
+
+## Known Issues 🐞
+Cognex Models :  In-Sight 3805  and In-Sight 2800 seem to have issues with the current implementation. The In-Sight Explorer software is unable to emulate these models, so it is difficult to debug the issues. If you have access to these models, please test the library and suggest fixes for the issues.
+
+```
