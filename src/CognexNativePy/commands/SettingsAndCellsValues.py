@@ -207,9 +207,6 @@ class SettingsAndCellsValues:
             and isinstance(wide_or_angle, float)
             and isinstance(angle_or_curve, float)
         ):
-            print(f'{isinstance(row_or_row_offset, (int, float))} {isinstance(row_offset_or_col_offset, float)} {
-                isinstance(col_offset_or_high, float)} {isinstance(high_or_wide, float)} {isinstance(wide_or_angle, float)} {
-                    isinstance(angle_or_curve, float)}')
             raise ValueError("Parameters has wrong types.")
         if curve is not None:
             if not re.match(r"^[A-Z]$", cell_or_tag):
