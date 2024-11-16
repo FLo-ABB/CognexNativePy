@@ -158,3 +158,43 @@ def receive_data_from_socket(socket: socket.socket, data_type: str) -> dict:
         return return_dict
     else:
         return {"status_code": status_code}
+
+
+def calculate_checksum(buffer: bytes) -> int:
+    """
+    Calculate the CRC for the given buffer.
+
+    Args:
+        buffer (bytes): The input buffer.
+
+    Returns:
+        int: The calculated CRC value (unsigned short).
+    """
+    if all(48 <= byte <= 57 or 65 <= byte <= 70 or 97 <= byte <= 102 for byte in buffer):
+        ascii_hex_buffer = buffer
+    else:
+        ascii_hex_buffer = hex_to_ascii_hex(buffer)
+    cword = 0  # Initialize CRC word
+    for byte in ascii_hex_buffer:
+        ch = byte << 8  # Shift byte to the left by 8 bits
+        for _ in range(8):  # Process each bit
+            if ((ch & 0x8000) ^ (cword & 0x8000)):  # Check if MSB differs
+                cword = (cword << 1) ^ 4129  # XOR with the polynomial
+            else:
+                cword <<= 1  # Shift left without XOR
+            cword &= 0xFFFF  # Ensure cword stays within 16 bits
+            ch <<= 1  # Shift ch to the left
+    return hex(cword).upper()[2:]
+
+
+def hex_to_ascii_hex(buffer: bytes) -> bytes:
+    """
+    Convert a buffer to its ASCII hex representation.
+
+    Args:
+        buffer (bytes): The input buffer.
+
+    Returns:
+        bytes: The ASCII hex representation of the buffer.
+    """
+    return ''.join(f'{byte:02X}' for byte in buffer).encode('ascii')
