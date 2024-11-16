@@ -1,4 +1,4 @@
-from CognexNativePy import NativeInterface
+from CognexNativePy import NativeInterface, utils
 
 
 def main():
@@ -18,8 +18,11 @@ def main():
             file_and_job.load_file(job_name)
 
         # Get the last image from the camera and save it as a BMP file
+        image_dic = image.read_image()
         with open('image.bmp', 'wb') as f:
-            f.write(image.read_image()["data"])
+            f.write(image_dic["data"])
+        print(f"Checksum from cognex camera: {image_dic['checksum']}")
+        print(f"Checksum calculated: {utils.calculate_checksum(image_dic["data"])}")
 
         # Get the value of the cell B010 (spreadsheet view)
         print(settings_and_cells_values.get_value("B", 10))
