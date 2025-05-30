@@ -184,7 +184,7 @@ def calculate_checksum(buffer: bytes) -> int:
                 cword <<= 1  # Shift left without XOR
             cword &= 0xFFFF  # Ensure cword stays within 16 bits
             ch <<= 1  # Shift ch to the left
-    return hex(cword).upper()[2:]
+    return "{:04X}".format(cword)
 
 
 def hex_to_ascii_hex(buffer: bytes) -> bytes:
