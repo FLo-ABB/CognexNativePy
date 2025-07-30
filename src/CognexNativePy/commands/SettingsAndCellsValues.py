@@ -214,8 +214,7 @@ class SettingsAndCellsValues:
             if not 0 <= row_or_row_offset <= 399:
                 raise ValueError("The row number must be between 0 and 399 (inclusive).")
             formatted_row = f"{row_or_row_offset:03d}"
-            command = f"SR{cell_or_tag}{formatted_row}{row_offset_or_col_offset} {
-                col_offset_or_high} {high_or_wide} {wide_or_angle} {angle_or_curve} {curve}"
+            command = f"SR{cell_or_tag}{formatted_row}{row_offset_or_col_offset} {col_offset_or_high} {high_or_wide} {wide_or_angle} {angle_or_curve} {curve}"
         else:
             if not cell_or_tag:
                 raise ValueError("The symbolic tag cannot be an empty string.")
