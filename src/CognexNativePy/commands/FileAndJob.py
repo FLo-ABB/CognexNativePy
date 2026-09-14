@@ -1,6 +1,10 @@
 from CognexNativePy.CognexCommandError import CognexCommandError
-from CognexNativePy.utils import (format_data, receive_data,
-                                  receive_data_from_socket, send_command)
+from CognexNativePy.utils import (
+    _receive_status_response,
+    format_data,
+    receive_data_from_socket,
+    send_command,
+)
 
 
 class FileAndJob:
@@ -34,7 +38,7 @@ class FileAndJob:
         """
         command = f"LF{filename}"
         send_command(self.socket, command)
-        status_code = receive_data(self.socket)[0]
+        status_code = _receive_status_response(self.socket)[0]
         status_messages = {
             "0": "Unrecognized command.",
             "-1": "The filename is missing.",
@@ -79,7 +83,7 @@ class FileAndJob:
         else:
             command = f"TF{filename}"
             send_command(self.socket, command)
-            status_code = receive_data(self.socket)[0]
+            status_code = _receive_status_response(self.socket)[0]
 
             status_messages = {
                 "0": "Unrecognized command.",
@@ -166,7 +170,7 @@ class FileAndJob:
         send_command(self.socket, f"{format_data(data)}")
         send_command(self.socket, f"{checksum}")
 
-        status_code = receive_data(self.socket)[0]
+        status_code = _receive_status_response(self.socket)[0]
 
         status_messages = {
             "0": "Unrecognized command.",
@@ -210,7 +214,7 @@ class FileAndJob:
             raise ValueError("The filename must have a .JOB or .CXD extension.")
         command = f"DF{filename}"
         send_command(self.socket, command)
-        status_code = receive_data(self.socket)[0]
+        status_code = _receive_status_response(self.socket)[0]
 
         status_messages = {
             "0": "Unrecognized command.",
@@ -248,7 +252,7 @@ class FileAndJob:
         """
         command = "GF"
         send_command(self.socket, command)
-        data_received = receive_data(self.socket)
+        data_received = _receive_status_response(self.socket, successful_value_lines=1)
         status_code, filename = data_received[0], data_received[1]
         status_messages = {
             "0": "Unrecognized command.",
@@ -287,7 +291,7 @@ class FileAndJob:
 
         command = f"SJ{job_id}"
         send_command(self.socket, command)
-        status_code = receive_data(self.socket)[0]
+        status_code = _receive_status_response(self.socket)[0]
 
         status_messages = {
             "0": "Unrecognized command.",
@@ -331,7 +335,7 @@ class FileAndJob:
 
         command = f"TJ{job_id}{job_name}"
         send_command(self.socket, command)
-        data_received = receive_data(self.socket)
+        data_received = _receive_status_response(self.socket)
         status_code = data_received[0]
 
         status_messages = {
@@ -416,7 +420,7 @@ class FileAndJob:
         send_command(self.socket, f"{job_size}")
         send_command(self.socket, f"{format_data(job_data)}")
         send_command(self.socket, f"{job_checksum}")
-        status_code = receive_data(self.socket)[0]
+        status_code = _receive_status_response(self.socket)[0]
 
         status_messages = {
             "0": "Unrecognized command.",
@@ -454,7 +458,7 @@ class FileAndJob:
 
         command = f"DJ{job_id}"
         send_command(self.socket, command)
-        status_code = receive_data(self.socket)[0]
+        status_code = _receive_status_response(self.socket)[0]
 
         status_messages = {
             "0": "Unrecognized command.",
@@ -491,7 +495,7 @@ class FileAndJob:
         """
         command = "GJ"
         send_command(self.socket, command)
-        data_received = receive_data(self.socket)
+        data_received = _receive_status_response(self.socket, successful_value_lines=1)
         status_code = data_received[0]
 
         status_messages = {

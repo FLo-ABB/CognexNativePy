@@ -3,7 +3,13 @@ import socket
 from typing import Union
 
 from CognexNativePy.CognexCommandError import CognexCommandError
-from CognexNativePy.utils import receive_data, send_command, receive_data_from_socket, format_data
+from CognexNativePy.utils import (
+    _receive_exact_lines,
+    _receive_status_response,
+    format_data,
+    receive_data_from_socket,
+    send_command,
+)
 
 
 class SettingsAndCellsValues:
@@ -41,7 +47,7 @@ class SettingsAndCellsValues:
             command = f'GV{cell_or_tag}'
 
         send_command(self.socket, command)
-        data_received = receive_data(self.socket)
+        data_received = _receive_status_response(self.socket, successful_value_lines=1)
         status_code = data_received[0]
         status_messages = {
             "0": "Unrecognized command.",
@@ -90,7 +96,7 @@ class SettingsAndCellsValues:
             command = f'SI{cell_or_tag} {row_or_value}'
 
         send_command(self.socket, command)
-        data_received = receive_data(self.socket)
+        data_received = _receive_status_response(self.socket)
         status_code = data_received[0]
         status_messages = {
             "0": "Unrecognized command.",
@@ -143,7 +149,7 @@ class SettingsAndCellsValues:
             command = f'SF{cell_or_tag} {row_or_value}'
 
         send_command(self.socket, command)
-        data_received = receive_data(self.socket)
+        data_received = _receive_status_response(self.socket)
         status_code = data_received[0]
         status_messages = {
             "0": "Unrecognized command.",
@@ -222,7 +228,7 @@ class SettingsAndCellsValues:
                 col_offset_or_high} {high_or_wide} {wide_or_angle} {angle_or_curve}'
 
         send_command(self.socket, command)
-        data_received = receive_data(self.socket)
+        data_received = _receive_status_response(self.socket)
         status_code = data_received[0]
         status_messages = {
             "0": "Unrecognized command.",
@@ -267,7 +273,7 @@ class SettingsAndCellsValues:
         formatted_row = f"{row:03d}"
         command = f"SS{column}{formatted_row}{string_value}"
         send_command(self.socket, command)
-        data_received = receive_data(self.socket)
+        data_received = _receive_status_response(self.socket)
         status_code = data_received[0]
         status_messages = {
             "0": "Unrecognized command.",
@@ -296,7 +302,7 @@ class SettingsAndCellsValues:
         """
         command = "GI"
         send_command(self.socket, command)
-        data_received = receive_data(self.socket)
+        data_received = _receive_status_response(self.socket, successful_value_lines=5)
         status_code = data_received[0]
         status_messages = {
             "0": "Unrecognized command.",
@@ -378,7 +384,7 @@ class SettingsAndCellsValues:
         send_command(self.socket, f"{size}")
         send_command(self.socket, f"{format_data(settings)}")
         send_command(self.socket, f"{checksum}")
-        data_received = receive_data(self.socket)
+        data_received = _receive_status_response(self.socket)
         status_code = data_received[0]
         status_messages = {
             "0": "Unrecognized command.",
@@ -407,7 +413,7 @@ class SettingsAndCellsValues:
         """
         command = "TS"
         send_command(self.socket, command)
-        data_received = receive_data(self.socket)
+        data_received = _receive_status_response(self.socket)
         status_code = data_received[0]
         status_messages = {
             "0": "Unrecognized command.",
@@ -441,7 +447,7 @@ class SettingsAndCellsValues:
 
         command = f"SL{lock}"
         send_command(self.socket, command)
-        data_received = receive_data(self.socket)
+        data_received = _receive_status_response(self.socket)
         status_code = data_received[0]
         status_messages = {
             "0": "Unrecognized command.",
@@ -469,5 +475,5 @@ class SettingsAndCellsValues:
         """
         command = "GL"
         send_command(self.socket, command)
-        data_received = receive_data(self.socket)
+        data_received = _receive_exact_lines(self.socket, 1)
         return int(data_received[0])

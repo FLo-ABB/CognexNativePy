@@ -1,7 +1,12 @@
 import socket
 
 from CognexNativePy.CognexCommandError import CognexCommandError
-from CognexNativePy.utils import receive_data_from_socket, send_command, format_data, receive_data
+from CognexNativePy.utils import (
+    _receive_status_response,
+    format_data,
+    receive_data_from_socket,
+    send_command,
+)
 
 
 class Image:
@@ -94,7 +99,7 @@ class Image:
         send_command(self.socket, f"{image_size}")
         send_command(self.socket, f"{format_data(image_data)}")
         send_command(self.socket, f"{image_checksum}")
-        status_code = receive_data(self.socket)[0]
+        status_code = _receive_status_response(self.socket)[0]
 
         status_messages = {
             "0": "Unrecognized command.",
@@ -132,7 +137,7 @@ class Image:
         send_command(self.socket, f"{format_data(image_data)}")
         send_command(self.socket, f"{image_checksum}")
 
-        status_code = receive_data(self.socket)[0]
+        status_code = _receive_status_response(self.socket)[0]
 
         status_messages = {
             "0": "Unrecognized command.",
