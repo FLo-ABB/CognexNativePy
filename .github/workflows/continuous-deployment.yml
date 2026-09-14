@@ -1,13 +1,15 @@
 name: Continuous Deployment and push to PyPI
 
 on:
-  pull_request:
+  push:
     branches:
       - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
     - name: Checkout repository
