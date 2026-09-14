@@ -1,7 +1,12 @@
 import socket
 
 from CognexNativePy.CognexCommandError import CognexCommandError
-from CognexNativePy.utils import send_command, receive_data
+from CognexNativePy.utils import (
+    _receive_exact_lines,
+    _receive_sized_response,
+    _receive_status_response,
+    send_command,
+)
 
 
 class ExecutionAndOnline:
@@ -32,7 +37,7 @@ class ExecutionAndOnline:
         else:
             command = f"SO{mode}"
             send_command(self.socket, command)
-            status_code = receive_data(self.socket)[0]
+            status_code = _receive_status_response(self.socket)[0]
             status_messages = {
                 "0": "Unrecognized command.",
                 "-1": "The value given for Int is either out of range, or is not a valid integer.",
@@ -62,7 +67,7 @@ class ExecutionAndOnline:
         """
         command = "GO"
         send_command(self.socket, command)
-        online_state = int(receive_data(self.socket)[0])
+        online_state = int(_receive_exact_lines(self.socket, 1)[0])
 
         if online_state in [0, 1]:
             return int(online_state)
@@ -110,7 +115,7 @@ class ExecutionAndOnline:
 
         command = f"SE{event_code}"
         send_command(self.socket, command)
-        data_received = receive_data(self.socket)
+        data_received = _receive_sized_response(self.socket)
         status_code, result = data_received[0], data_received[1]
 
         status_messages = {
@@ -159,7 +164,7 @@ class ExecutionAndOnline:
         command = f"SW{event_code}"
         send_command(self.socket, command)
 
-        status_code = receive_data(self.socket)[0]
+        status_code = _receive_status_response(self.socket)[0]
 
         status_messages = {
             "0": "Unrecognized command.",
@@ -187,7 +192,7 @@ class ExecutionAndOnline:
         """
         command = "RT"
         send_command(self.socket, command)
-        status_code = receive_data(self.socket)[0]
+        status_code = _receive_status_response(self.socket)[0]
 
         status_messages = {
             "-6": "User does not have Full Access to execute the command. For more information, see Cognex Documentation.",
@@ -225,7 +230,7 @@ class ExecutionAndOnline:
             command += f'{event_code}'
 
         send_command(self.socket, command)
-        status_code = receive_data(self.socket)[0]
+        status_code = _receive_status_response(self.socket)[0]
 
         status_messages = {
             "0": "Unrecognized command.",

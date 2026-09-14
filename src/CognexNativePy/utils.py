@@ -1,10 +1,183 @@
+import select
 import socket
 import textwrap
+import time
+import weakref
 
 from CognexNativePy.CognexCommandError import CognexCommandError
 
 PORT = 23
 DEBUG = False
+_LINE_END = b'\r\n'
+_RECEIVE_TIMEOUT_SECONDS = 30.0
+_RECV_CHUNK_BYTES = 4096
+_MAX_BUFFERED_BYTES = 64 * 1024
+_READERS = weakref.WeakKeyDictionary()
+
+
+class _SocketReader:
+    """Buffers a socket byte stream until complete protocol frames exist."""
+
+    def __init__(self, connection: socket.socket):
+        self._connection = weakref.ref(connection)
+        self.buffer = bytearray()
+        self.invalid = False
+
+    @property
+    def connection(self) -> socket.socket:
+        connection = self._connection()
+        if connection is None:
+            raise CognexCommandError("Socket session is no longer usable.")
+        return connection
+
+    def _fail(self, message: str):
+        self.invalid = True
+        self.buffer.clear()
+        try:
+            self.connection.close()
+        finally:
+            raise CognexCommandError(message)
+
+    def _receive_more(self, deadline: float) -> None:
+        if self.invalid:
+            raise CognexCommandError("Socket session is no longer usable.")
+
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            self._fail("Timed out while receiving a complete response.")
+
+        previous_timeout = None
+        timeout_supported = hasattr(self.connection, 'gettimeout') and hasattr(self.connection, 'settimeout')
+        if timeout_supported:
+            previous_timeout = self.connection.gettimeout()
+            self.connection.settimeout(remaining)
+
+        try:
+            chunk = self.connection.recv(_RECV_CHUNK_BYTES)
+        except (socket.timeout, TimeoutError):
+            self._fail("Timed out while receiving a complete response.")
+        except OSError:
+            self._fail("Socket error while receiving a response.")
+        finally:
+            if timeout_supported and not self.invalid:
+                self.connection.settimeout(previous_timeout)
+
+        if not chunk:
+            self._fail("Connection closed before a complete response was received.")
+        if len(self.buffer) + len(chunk) > _MAX_BUFFERED_BYTES:
+            self._fail("Response exceeded the maximum buffered size.")
+        self.buffer.extend(chunk)
+
+    def read_line(self, deadline: float) -> str:
+        while True:
+            end = self.buffer.find(_LINE_END)
+            if end >= 0:
+                line = bytes(self.buffer[:end])
+                del self.buffer[:end + len(_LINE_END)]
+                try:
+                    return line.decode('ascii')
+                except UnicodeDecodeError:
+                    self._fail("Response contained non-ASCII data.")
+            self._receive_more(deadline)
+
+    def read_bytes(self, size: int, deadline: float) -> bytes:
+        while len(self.buffer) < size:
+            self._receive_more(deadline)
+        data = bytes(self.buffer[:size])
+        del self.buffer[:size]
+        return data
+
+    def read_prompt(self, prompt: bytes, deadline: float) -> None:
+        while True:
+            if self.buffer == prompt:
+                self.buffer.clear()
+                return
+            if self.buffer and not prompt.startswith(self.buffer):
+                self._fail("Unexpected login prompt received.")
+            self._receive_more(deadline)
+
+    def finish_response(self) -> None:
+        if self.buffer:
+            self._fail("Unexpected data remained after the response.")
+
+    def ensure_can_send(self) -> None:
+        if self.invalid:
+            raise CognexCommandError("Socket session is no longer usable.")
+        if self.buffer:
+            self._fail("Unexpected data was pending before a command.")
+        try:
+            readable, _, _ = select.select([self.connection], [], [], 0)
+        except (OSError, TypeError, ValueError):
+            return
+        if not readable:
+            return
+        try:
+            pending = self.connection.recv(1, socket.MSG_PEEK)
+        except (BlockingIOError, socket.timeout):
+            return
+        except OSError:
+            self._fail("Socket error while checking pending data.")
+        if pending:
+            self._fail("Unexpected data was pending before a command.")
+        self._fail("Connection was closed before a command was sent.")
+
+
+def _get_reader(connection: socket.socket) -> _SocketReader:
+    reader = _READERS.get(connection)
+    if reader is None:
+        reader = _SocketReader(connection)
+        _READERS[connection] = reader
+    return reader
+
+
+def _deadline() -> float:
+    return time.monotonic() + _RECEIVE_TIMEOUT_SECONDS
+
+
+def _receive_exact_lines(connection: socket.socket, line_count: int) -> list:
+    reader = _get_reader(connection)
+    deadline = _deadline()
+    lines = [reader.read_line(deadline) for _ in range(line_count)]
+    reader.finish_response()
+    return lines
+
+
+def _receive_status_response(connection: socket.socket, successful_value_lines: int = 0) -> list:
+    reader = _get_reader(connection)
+    deadline = _deadline()
+    status = reader.read_line(deadline)
+    response = [status]
+    if status == "1":
+        response.extend(reader.read_line(deadline) for _ in range(successful_value_lines))
+    else:
+        response.extend('' for _ in range(successful_value_lines))
+    reader.finish_response()
+    return response
+
+
+def _receive_sized_response(connection: socket.socket) -> list:
+    reader = _get_reader(connection)
+    deadline = _deadline()
+    status = reader.read_line(deadline)
+    if status != "1":
+        reader.finish_response()
+        return [status, '']
+
+    try:
+        payload_size = int(reader.read_line(deadline))
+    except ValueError:
+        reader._fail("Response contained an invalid payload size.")
+    if payload_size < 0:
+        reader._fail("Response contained an invalid payload size.")
+    payload = reader.read_bytes(payload_size, deadline)
+    if reader.read_bytes(len(_LINE_END), deadline) != _LINE_END:
+        reader._fail("Response payload was not terminated by CRLF.")
+    try:
+        decoded_payload = payload.decode('ascii')
+    except UnicodeDecodeError:
+        reader._fail("Response contained non-ASCII data.")
+    reader.finish_response()
+    return [status, decoded_payload]
 
 
 def send_command(socket: socket.socket, string_command: str):
@@ -18,6 +191,7 @@ def send_command(socket: socket.socket, string_command: str):
     Returns:
         None
     """
+    _get_reader(socket).ensure_can_send()
     if DEBUG:
         with open('out.txt', 'a') as f:
             f.write(string_command+'\n')
@@ -35,8 +209,12 @@ def receive_data(socket: socket.socket) -> list:
     Returns:
         list: The received data as a list of strings.
     """
-    data = socket.recv(4096)
-    string_data = data.decode('ascii').split('\r\n')
+    reader = _get_reader(socket)
+    deadline = _deadline()
+    string_data = [reader.read_line(deadline)]
+    while reader.buffer.find(_LINE_END) >= 0:
+        string_data.append(reader.read_line(deadline))
+    string_data.append('')
     if DEBUG:
         with open('in.txt', 'a') as f:
             f.write("\n".join(string_data))
@@ -58,14 +236,17 @@ def open_socket(host_adress: str) -> socket.socket:
 
     """
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.settimeout(_RECEIVE_TIMEOUT_SECONDS)
     try:
         s.connect((host_adress, PORT))
-        data_received = receive_data(s)[0]
+        data_received = _get_reader(s).read_line(_deadline())
         if not (data_received.startswith('Welcome')):
+            close_socket(s)
             raise CognexCommandError(f'Error logging in, expected "Welcome [...]", received "{data_received}"')
         else:
             return s
     except socket.timeout:
+        close_socket(s)
         raise CognexCommandError(f'Connection attempt to {host_adress} timed out')
 
 
@@ -79,6 +260,7 @@ def close_socket(socket: socket.socket) -> None:
     Returns:
         None
     """
+    _READERS.pop(socket, None)
     socket.close()
 
 
@@ -94,14 +276,15 @@ def login_to_cognex_system(socket: socket.socket, user: str, password: str):
     Returns:
         None
     """
-    expected_responses = ['User: ', 'Password: ', 'User Logged In']
-    commands = [user, password, None]
-    for expected_response, command in zip(expected_responses, commands):
-        if receive_data(socket)[0] == expected_response:
-            if command is not None:
-                send_command(socket, command)
-        else:
-            raise CognexCommandError(f'Error logging in, expected "{expected_response}"')
+    reader = _get_reader(socket)
+    deadline = _deadline()
+    reader.read_prompt(b'User: ', deadline)
+    send_command(socket, user)
+    reader.read_prompt(b'Password: ', deadline)
+    send_command(socket, password)
+    if reader.read_line(deadline) != 'User Logged In':
+        reader._fail('Error logging in, expected "User Logged In"')
+    reader.finish_response()
 
 
 def format_data(data: bytes):
